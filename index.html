@@ -1,0 +1,3015 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MIGAgames.com</title>
+    <style>
+        body {
+            margin: 0; /* Убирает отступ по умолчанию, чтобы текст был выше */
+            padding-left: 170px;  /* Добавляет отступ слева для баннера */
+            padding-right: 170px; /* Добавляет отступ справа для баннера */
+        }
+        #main-content {
+            /* Этот контейнер будет скрыт до входа в систему */
+            display: none;
+        }
+        #auth-container {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            text-align: right;
+        }
+        #auth-container button {
+            margin-left: 5px;
+        }
+        .button-container {
+            text-align: center;
+            margin-top: 100px; /* Отодвигает кнопки вниз */
+        }
+        .button-container button {
+            animation: float 12s ease-in-out infinite;
+        }
+        .button-container button:nth-child(1) {
+            animation-delay: 0s;
+        }
+        .button-container button:nth-child(2) {
+            animation-delay: -4s;
+        }
+        .button-container button:nth-child(3) {
+            animation-delay: -8s;
+        }
+        button {
+            padding: 12px 24px;
+            font-size: 16px;
+            margin: 8px;
+            cursor: pointer;
+            border: 2px solid black; /* Добавлена жирная черная рамка */
+        }
+        .game-menu {
+            display: none; /* Hidden by default. */
+            margin-top: 20px;
+            padding: 20px 40px; /* Reduced vertical padding */
+            border: 1px solid #ccc;
+            text-align: center;
+            position: relative; /* Needed for absolute positioning of child elements */
+            width: 50%; /* Set a width */
+            margin-left: auto; /* Center the block */
+            margin-right: auto; /* Center the block */
+        }
+        #halloween-candies-container button {
+            font-size: 4em; /* Make candy emojis large */
+            background: none;
+            border: none;
+            cursor: pointer;
+            margin: 10px;
+            padding: 0;
+            transition: transform 0.2s;
+        }
+        #halloween-candies-container button:hover {
+            transform: scale(1.2);
+        }
+        #hr-menu .horse-selection button {
+            font-size: 1.5em;
+            padding: 15px 30px;
+        }
+        #hr-track-container {
+            position: relative;
+            width: 100%;
+            height: 200px;
+            border: 2px solid #8B4513; /* SaddleBrown */
+            background-color: #DEB887; /* BurlyWood */
+            margin-top: 20px;
+            overflow: hidden; /* Keep horses inside the track */
+        }
+        .horse-track {
+            position: relative;
+            width: 100%;
+            height: 33.33%;
+            border-bottom: 1px dashed #8B4513;
+        }
+        .horse {
+            position: absolute;
+            font-size: 2.5em;
+            left: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+            transition: left 0.1s linear;
+        }
+        #red-horse {
+            text-shadow: 0 0 8px red, 0 0 12px red;
+        }
+        #green-horse {
+            text-shadow: 0 0 8px limegreen, 0 0 12px limegreen;
+        }
+        #blue-horse {
+            text-shadow: 0 0 8px blue, 0 0 12px blue;
+        }
+        #hr-finish-line {
+            position: absolute;
+            right: 15%;
+            top: 0;
+            height: 100%;
+            border-right: 5px dashed red;
+        }
+        #shop-items-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .shop-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            border: 1px solid #555;
+            border-radius: 8px;
+            background-color: #444;
+        }
+        .shop-item-name {
+            font-size: 1.2em;
+        }
+        .shop-item-price {
+            font-size: 1.1em;
+            color: gold;
+        }
+        .shop-item-buy-btn:disabled {
+            background-color: #6c757d; /* grey */
+            cursor: not-allowed;
+            color: #ccc;
+        }
+        /* Boss Battle Styles */
+        #bb-game-area {
+            position: relative;
+            height: 150px;
+            border: 2px solid #333;
+            background-color: #f0f0f0;
+            margin-top: 20px;
+            overflow: hidden;
+        }
+        #bb-player {
+            position: absolute;
+            font-size: 3em;
+            left: 20px;
+            bottom: 10px;
+        }
+        #bb-boss {
+            position: absolute;
+            font-size: 3.5em;
+            right: 20px;
+            bottom: 10px;
+            cursor: pointer;
+            user-select: none;
+            transition: right 0.5s linear;
+        }
+        #bb-boss-health-container {
+            width: 100px;
+            height: 15px;
+            border: 1px solid black;
+            background-color: #ff0000;
+            margin: 5px auto;
+        }
+        #bb-boss-health-bar {
+            width: 100%;
+            height: 100%;
+            background-color: #00ff00;
+        }
+
+        /* Memory Match Styles */
+        #mm-board {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            gap: 10px;
+            margin-top: 20px;
+            perspective: 1000px; /* For 3D flip effect */
+        }
+        .mm-card {
+            width: 80px;
+            height: 80px;
+            position: relative;
+            transform-style: preserve-3d;
+            transition: transform 0.6s;
+            cursor: pointer;
+        }
+        .mm-card.flipped {
+            transform: rotateY(180deg);
+        }
+        .mm-card-face {
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            backface-visibility: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.5em;
+            border: 2px solid #333;
+            border-radius: 5px;
+        }
+        .mm-card-front {
+            transform: rotateY(180deg);
+        }
+
+        /* Tic-Tac-Toe Styles */
+        #ttt-board {
+            display: grid;
+            grid-template-columns: repeat(3, 100px);
+            grid-template-rows: repeat(3, 100px);
+            gap: 5px;
+            justify-content: center;
+            margin-top: 20px;
+        }
+        .ttt-cell {
+            width: 100px;
+            height: 100px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3em;
+            font-weight: bold;
+            border: 2px solid #333;
+            cursor: pointer;
+            user-select: none;
+            background-color: #f0f0f0;
+        }
+
+        /* Whac-A-Mole Styles */
+        #wam-board {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            width: 300px;
+            height: 300px;
+            margin: 20px auto;
+        }
+        .wam-hole {
+            border: 5px solid #8B4513;
+            background-color: #DEB887;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3em;
+            cursor: pointer;
+            user-select: none;
+        }
+        .wam-mole {
+            animation: mole-up 0.5s ease-out;
+        }
+        @keyframes mole-up {
+            from { transform: translateY(50px) scale(0.5); }
+            to { transform: translateY(0) scale(1); }
+        }
+
+        /* Simon Says Styles */
+        #ss-buttons {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            width: 250px;
+            margin: 20px auto;
+        }
+        .ss-button {
+            width: 120px;
+            height: 120px;
+            border: 3px solid black;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: filter 0.2s;
+        }
+        .ss-button:hover {
+            filter: brightness(1.1);
+        }
+        .ss-button.active {
+            filter: brightness(1.5);
+            transform: scale(1.05);
+            box-shadow: 0 0 15px white;
+        }
+        
+
+        .back-button {
+            position: absolute;
+            top: 10px; /* Adjust as needed for padding */
+            left: 10px; /* Adjust as needed for padding */
+            background: none; /* Make it look less like a standard button */
+            border: none;
+            font-size: 24px; /* Make the arrow prominent */
+            cursor: pointer;
+            padding: 0; /* Remove default button padding */
+            margin: 0; /* Remove default button margin */
+        }
+        .game-menu p {
+            font-size: 22px; /* Увеличен размер текста "BOT" и "PLAYER" */
+            font-weight: bold;
+            margin-top: 0; /* Приближает "BOT" к верху */
+            margin-bottom: 15px; /* Стандартный отступ снизу */
+        }
+        .game-menu button {
+            /* Эти стили не будут применяться к кнопке "назад" из-за её более специфичного класса .back-button */
+            padding: 10px 20px; /* Уменьшены отступы для кнопок */
+            font-size: 16px; /* Уменьшен шрифт на кнопках */
+        }
+        #result-container {
+            height: 150px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        #dice-icon {
+            font-size: 100px; /* Сделаем кость крупнее */
+            margin: 20px 0;
+            text-shadow: 4px 4px 8px rgba(0, 0, 0, 0.3); /* Добавим тень для объема */
+            transform: rotate(-8deg); /* Немного наклоним */
+            color: #333; /* Сделаем цвет чуть мягче */
+        }
+        #dice-icon-container {
+            height: 140px; /* Задаем фиксированную высоту контейнеру */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        @keyframes spin {
+            from { transform: rotate(0deg); }
+            to { transform: rotate(360deg); }
+        }
+        .spinning {
+            animation: spin 0.4s linear infinite; /* Увеличена скорость вращения */
+            text-shadow: none; /* Убираем тень во время вращения для плавности */
+        }
+
+        #emoji-background {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: -1;
+            overflow: hidden;
+        }
+
+        #emoji-background span {
+            position: absolute;
+            user-select: none; /* Запрещает выделение смайликов */
+            animation: float 10s ease-in-out infinite;
+        }
+
+        @keyframes float {
+            0% { transform: translateY(0px) rotate(0deg); } /* Начальное положение */
+            25% { transform: translateY(-5px) rotate(-5deg); } /* Чуть вверх и влево */
+            50% { transform: translateY(-10px) rotate(0deg); } /* Максимально вверх, без наклона */
+            75% { transform: translateY(-5px) rotate(5deg); } /* Чуть вверх и вправо */
+            100% { transform: translateY(0px) rotate(0deg); } /* Возврат в начальное положение */
+        }
+
+        #welcome-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.85);
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+        }
+        .auth-form-container {
+            background-color: #333;
+            padding: 30px;
+            border-radius: 10px;
+            width: 350px;
+            text-align: center;
+        }
+        .auth-form-container input {
+            width: 90%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border-radius: 5px;
+            border: 1px solid #555;
+        }
+        .auth-switch-link {
+            color: #00aaff;
+            cursor: pointer;
+            font-size: 14px;
+            margin-top: 15px;
+            display: inline-block;
+        }
+        .auth-form-container button {
+            border: 2px solid black; /* Применяем стиль рамки к кнопкам в форме */
+            background-color: #007bff; /* Default blue background */
+            color: white; /* White text for contrast */
+            padding: 10px 20px; /* Make them a bit larger */
+            border-radius: 5px;
+            cursor: pointer;
+            width: 90%; /* Match input width */
+            margin-top: 15px; /* Add some space above */
+        }
+
+        .ad-banner {
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            width: 160px; /* Ширина баннера */
+            background-color: #f1f1f1;
+            border: 1px solid #dcdcdc;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            color: #555;
+            z-index: 500; /* Ниже чем меню, но выше фона */
+        }
+        #left-ad-banner {
+            left: 0;
+        }
+        #right-ad-banner {
+            right: 0;
+        }
+        .cobweb {
+            position: fixed;
+            font-size: 120px;
+            z-index: 501; /* Above banners but below menus */
+            opacity: 0.7;
+            user-select: none;
+            display: none; /* Hidden by default */
+        }
+        #left-cobweb {
+            top: -20px;
+            left: -20px;
+        }
+        #right-cobweb {
+            top: -20px;
+            right: -20px;
+            transform: scaleX(-1); /* Flip horizontally */
+        }
+    </style>
+</head>
+<body>
+    <div id="left-cobweb" class="cobweb">🕸️</div>
+    <div id="right-cobweb" class="cobweb">🕸️</div>
+    <div id="left-ad-banner" class="ad-banner">mamntikkk</div>
+    <div id="right-ad-banner" class="ad-banner">mamntikkk</div>
+    <div id="emoji-background"></div>
+    <div id="main-content">
+        <div id="auth-container"></div>
+        <h1 id="main-title" style="font-size: 12em; color: crimson; text-align: center; margin-bottom: 20px; margin-top: 0;">MAWNgames</h1>
+        <p style="text-align: center;">
+            <span id="total-wins-display" style="font-size: 3.6em; color: #007bff;">Total Wins: 0</span>
+            <span id="coins-display" style="font-size: 3.6em; color: gold; margin-left: 20px;">Coins: 0</span>
+        </p>
+
+             <div class="button-container">
+                <button id="rps-button"></button>
+                <button id="gtn-button"></button>
+                <button id="halloween-event-button" style="background-color: orange;"></button>
+                <button id="bb-button" style="background-color: orange;"></button>
+                <button id="hr-button"></button>
+                <button id="mm-button"></button>
+                <button id="ttt-button"></button>
+                <button id="wam-button"></button>
+                <button id="ss-button"></button>
+                <button id="shop-button"></button>
+                <button id="donate-button"></button>
+                <button id="settings-button"></button>
+             </div>
+    </div>
+
+         <!-- This is the menu that will appear -->
+         <div id="rps-menu" class="game-menu">
+            <button id="rps-back-button" class="back-button">&larr;</button>
+            <p id="bot-label"></p>
+            <div id="result-container">
+                <p id="bot-choice-text" style="font-size: 20px; margin: 5px;">Choice: ?</p>
+                <h2 id="result-text" style="font-size: 48px; margin: 10px;"></h2>
+            </div>
+            <button id="rock-btn"></button>
+            <button id="paper-btn"></button>
+            <button id="scissors-btn"></button>
+            <p id="player-label" style="margin-top: 25px; margin-bottom: 0;"></p>
+         </div>
+
+         <!-- Guess the number menu -->
+         <div id="gtn-menu" class="game-menu">
+            <button id="gtn-back-button" class="back-button">&larr;</button>
+            <h2 id="gtn-title"></h2>
+            <div id="dice-icon-container">
+                <p id="dice-icon">⚃</p>
+            </div>
+            <h2 id="gtn-result-text" style="font-size: 48px; margin: 10px;"></h2>
+            <div id="gtn-choices">
+                <!-- Кнопки будут добавлены через JS -->
+            </div>
+            <button id="play-again-btn" style="display: none;"></button>
+         </div>
+
+         <!-- Halloween Event Menu -->
+         <div id="halloween-menu" class="game-menu">
+            <button id="halloween-back-button" class="back-button">&larr;</button>
+            <h2 id="halloween-title"></h2>
+            <div id="halloween-candies-container">
+                <!-- Candies will be added via JS -->
+            </div>
+            <h2 id="halloween-result-text" style="font-size: 48px; margin: 10px;"></h2>
+         </div>
+
+         <!-- Horse Racing Menu -->
+         <div id="hr-menu" class="game-menu">
+            <button id="hr-back-button" class="back-button">&larr;</button>
+            <h2 id="hr-title"></h2>
+            <div class="horse-selection">
+                <p id="hr-instruction"></p>
+                <button id="red-horse-btn">🐎</button>
+                <button id="green-horse-btn">🐎</button>
+                <button id="blue-horse-btn">🐎</button>
+            </div>
+            <div id="hr-track-container" style="display: none;">
+                <div id="hr-finish-line"></div>
+                <div class="horse-track"><span id="red-horse" class="horse">🐎</span></div>
+                <div class="horse-track"><span id="green-horse" class="horse">🐎</span></div>
+                <div class="horse-track"><span id="blue-horse" class="horse">🐎</span></div>
+            </div>
+            <h2 id="hr-result-text" style="font-size: 48px; margin: 10px;"></h2>
+         </div>
+
+         <!-- Shop Menu -->
+         <div id="shop-menu" class="game-menu">
+            <button id="shop-back-button" class="back-button">&larr;</button>
+            <h2 id="shop-title"></h2>
+            <div id="shop-items-container">
+                <!-- Items will be added here via JS -->
+            </div>
+         </div>
+
+         <!-- Boss Battle Menu -->
+         <div id="bb-menu" class="game-menu">
+            <button id="bb-back-button" class="back-button">&larr;</button>
+            <h2 id="bb-title"></h2>
+            <div id="bb-difficulty-selection">
+                <h3 id="bb-difficulty-title"></h3>
+                <button id="bb-easy-btn"></button>
+                <button id="bb-normal-btn"></button>
+                <button id="bb-hard-btn"></button>
+            </div>
+            <div id="bb-game-content" style="display: none;">
+                <div id="bb-boss-health-container">
+                    <div id="bb-boss-health-bar"></div>
+                </div>
+                <div id="bb-game-area">
+                    <span id="bb-player">🧑</span>
+                    <span id="bb-boss">🤖</span>
+                </div>
+                <h2 id="bb-result-text" style="font-size: 48px; margin: 10px;"></h2>
+                <button id="bb-play-again-btn" style="display: none; margin-top: 15px;"></button>
+            </div>
+         </div>
+
+         <!-- Memory Match Menu -->
+         <div id="mm-menu" class="game-menu">
+            <button id="mm-back-button" class="back-button">&larr;</button>
+            <h2 id="mm-title"></h2>
+            <div id="mm-board"></div>
+            <h2 id="mm-result-text" style="font-size: 48px; margin: 10px;"></h2>
+         </div>
+
+         <!-- Tic-Tac-Toe Menu -->
+         <div id="ttt-menu" class="game-menu">
+            <button id="ttt-back-button" class="back-button">&larr;</button>
+            <h2 id="ttt-title"></h2>
+            <div id="ttt-board"></div>
+            <h2 id="ttt-result-text" style="font-size: 48px; margin: 10px;"></h2>
+            <button id="ttt-play-again-btn" style="display: none; margin-top: 15px;"></button>
+         </div>
+
+         <!-- Whac-A-Mole Menu -->
+         <div id="wam-menu" class="game-menu">
+            <button id="wam-back-button" class="back-button">&larr;</button>
+            <h2 id="wam-title"></h2>
+            <p><span id="wam-score-label"></span>: <span id="wam-score">0</span> | <span id="wam-timer-label"></span>: <span id="wam-timer">20</span></p>
+            <div id="wam-board"></div>
+            <h2 id="wam-result-text" style="font-size: 48px; margin: 10px;"></h2>
+            <button id="wam-play-again-btn" style="display: none; margin-top: 15px;"></button>
+         </div>
+
+         <!-- Simon Says Menu -->
+         <div id="ss-menu" class="game-menu">
+            <button id="ss-back-button" class="back-button">&larr;</button>
+            <h2 id="ss-title"></h2>
+            <p><span id="ss-score-label"></span>: <span id="ss-score">0</span></p>
+            <div id="ss-buttons"></div>
+            <h2 id="ss-result-text" style="font-size: 48px; margin: 10px;"></h2>
+            <button id="ss-start-btn" style="margin-top: 15px;"></button>
+         </div>
+
+         <!-- Settings menu -->
+         <div id="settings-menu" class="game-menu">
+            <button id="settings-back-button" class="back-button">&larr;</button>
+            <div id="settings-main-content">
+                <h2 id="settings-title"></h2>
+                <button id="language-menu-btn" style="margin-top: 20px;"></button>
+                <button id="theme-menu-btn" style="margin-top: 20px;"></button>
+                <button id="button-color-menu-btn" style="margin-top: 20px;"></button>
+                <button id="emoji-pack-menu-btn" style="margin-top: 20px;"></button>
+            </div>
+            <div id="language-submenu" style="display: none;">
+                <button id="language-submenu-back-btn" class="back-button">&larr;</button>
+                <h2 id="language-menu-title"></h2>
+                <!-- Language buttons will be added here via JS -->
+            </div>
+            <div id="theme-submenu" style="display: none;">
+                <button id="theme-submenu-back-btn" class="back-button">&larr;</button>
+                <h2 id="theme-menu-title"></h2>
+                <div id="theme-buttons-container" style="margin-top: 15px;"></div>
+                <!-- Language buttons will be added here via JS -->
+            </div>
+            <div id="button-color-submenu" style="display: none;">
+                <button id="button-color-submenu-back-btn" class="back-button">&larr;</button>
+                <h2 id="button-color-menu-title"></h2>
+                <div id="button-color-buttons-container" style="margin-top: 15px;"></div>
+            </div>
+            <div id="emoji-pack-submenu" style="display: none;">
+                <button id="emoji-pack-submenu-back-btn" class="back-button">&larr;</button>
+                <h2 id="emoji-pack-menu-title"></h2>
+                <div id="emoji-pack-buttons-container" style="margin-top: 15px;"></div>
+            </div>
+         </div>
+
+        <!-- Welcome/Auth Overlay -->
+        <div id="welcome-overlay">
+            <div class="auth-form-container">
+                <!-- This container will be filled by JavaScript -->
+            </div>
+        </div>
+
+    <!-- HTML Templates for Auth Forms -->
+    <template id="welcome-register-form-template">
+        <div id="welcome-register-form">
+            <h2 id="welcome-register-title"></h2>
+            <input type="text" id="welcome-register-username" placeholder="Username">
+            <input type="email" id="welcome-register-email" placeholder="Email">
+            <input type="password" id="welcome-register-password" placeholder="Password">
+            <button id="welcome-register-submit"></button>
+            <p id="welcome-register-error" style="color: red; font-size: 14px;"></p>
+            <span id="switch-to-login" class="auth-switch-link"></span>
+        </div>
+    </template>
+    <template id="welcome-login-form-template">
+        <div id="welcome-login-form">
+            <h2 id="welcome-login-title"></h2>
+            <input type="text" id="welcome-login-username" placeholder="Username">
+            <input type="password" id="welcome-login-password" placeholder="Password">
+            <button id="welcome-login-submit"></button>
+            <p id="welcome-login-error" style="color: red; font-size: 14px;"></p>
+            <span id="switch-to-register" class="auth-switch-link"></span>
+        </div>
+    </template>
+
+    <!-- Donate Menu -->
+    <div id="donate-menu" class="game-menu">
+        <!-- Amount Selection View -->
+        <div id="donate-amount-selection">
+            <button id="donate-back-btn" class="back-button">&larr;</button>
+            <h2 id="donate-title"></h2>
+            <p id="donate-description" style="font-size: 16px; font-weight: normal;"></p>
+            <div id="donate-options" style="margin-top: 20px;">
+                <button class="donate-option-btn" data-amount="$0.50">$0.50</button>
+                <button class="donate-option-btn" data-amount="€1 / $1">€1 / $1</button>
+                <button class="donate-option-btn" data-amount="€3 / $3">€3 / $3</button>
+            </div>
+        </div>
+        <!-- Payment Method Selection View (hidden by default) -->
+        <div id="donate-payment-selection" style="display: none;">
+            <button id="donate-payment-back-btn" class="back-button">&larr;</button>
+            <h2 id="donate-payment-title"></h2>
+            <button id="apple-pay-btn" style="background-color: black; color: white; margin-top: 25px; padding: 15px; width: 90%; border-radius: 10px;"></button>
+            <button id="card-pay-btn" style="background-color: #007bff; color: white; margin-top: 15px; padding: 15px; width: 90%; border-radius: 10px;"></button>
+            <p id="payment-info" style="font-size: 12px; font-weight: normal; margin-top: 15px;"></p>
+        </div>
+    </div>
+
+    <script>
+        // Get the button and the menu elements
+        const rpsButton = document.getElementById('rps-button');
+        const rpsMenu = document.getElementById('rps-menu');
+        const rpsBackButton = document.getElementById('rps-back-button');
+
+        const gtnButton = document.getElementById('gtn-button');
+        const gtnMenu = document.getElementById('gtn-menu');
+        const gtnBackButton = document.getElementById('gtn-back-button');
+
+        const settingsButton = document.getElementById('settings-button');
+        const settingsMenu = document.getElementById('settings-menu');
+        const settingsBackButton = document.getElementById('settings-back-button');
+
+        const halloweenEventButton = document.getElementById('halloween-event-button');
+        const halloweenMenu = document.getElementById('halloween-menu');
+        const halloweenBackButton = document.getElementById('halloween-back-button');
+        const halloweenTitle = document.getElementById('halloween-title');
+        const halloweenCandiesContainer = document.getElementById('halloween-candies-container');
+        const halloweenResultText = document.getElementById('halloween-result-text');
+
+        const hrButton = document.getElementById('hr-button');
+        const hrMenu = document.getElementById('hr-menu');
+        const hrBackButton = document.getElementById('hr-back-button');
+        const hrTitle = document.getElementById('hr-title');
+        const hrInstruction = document.getElementById('hr-instruction');
+        const hrResultText = document.getElementById('hr-result-text');
+        const hrTrackContainer = document.getElementById('hr-track-container');
+        const redHorseBtn = document.getElementById('red-horse-btn');
+        const greenHorseBtn = document.getElementById('green-horse-btn');
+        const blueHorseBtn = document.getElementById('blue-horse-btn');
+
+        const shopButton = document.getElementById('shop-button');
+        const shopMenu = document.getElementById('shop-menu');
+        const shopBackButton = document.getElementById('shop-back-button');
+        const shopTitle = document.getElementById('shop-title');
+
+        const bbButton = document.getElementById('bb-button');
+        const bbMenu = document.getElementById('bb-menu');
+        const bbBackButton = document.getElementById('bb-back-button');
+        const bbTitle = document.getElementById('bb-title');
+        const bbBoss = document.getElementById('bb-boss');
+        const bbBossHealthBar = document.getElementById('bb-boss-health-bar');
+        const bbResultText = document.getElementById('bb-result-text');
+        const bbPlayAgainBtn = document.getElementById('bb-play-again-btn');
+
+        const mmButton = document.getElementById('mm-button');
+        const mmMenu = document.getElementById('mm-menu');
+        const mmBackButton = document.getElementById('mm-back-button');
+        const mmTitle = document.getElementById('mm-title');
+        const mmBoard = document.getElementById('mm-board');
+        const mmResultText = document.getElementById('mm-result-text');
+
+        const tttButton = document.getElementById('ttt-button');
+        const tttMenu = document.getElementById('ttt-menu');
+        const tttBackButton = document.getElementById('ttt-back-button');
+        const tttTitle = document.getElementById('ttt-title');
+        const tttBoard = document.getElementById('ttt-board');
+        const tttResultText = document.getElementById('ttt-result-text');
+        const tttPlayAgainBtn = document.getElementById('ttt-play-again-btn');
+
+        const wamButton = document.getElementById('wam-button');
+        const wamMenu = document.getElementById('wam-menu');
+        const wamBackButton = document.getElementById('wam-back-button');
+        const wamTitle = document.getElementById('wam-title');
+        const wamBoard = document.getElementById('wam-board');
+        const wamScoreDisplay = document.getElementById('wam-score');
+        const wamTimerDisplay = document.getElementById('wam-timer');
+        const wamResultText = document.getElementById('wam-result-text');
+        const wamPlayAgainBtn = document.getElementById('wam-play-again-btn');
+
+        const ssButton = document.getElementById('ss-button');
+        const ssMenu = document.getElementById('ss-menu');
+        const ssBackButton = document.getElementById('ss-back-button');
+        const ssTitle = document.getElementById('ss-title');
+        const ssButtonsContainer = document.getElementById('ss-buttons');
+        const ssScoreDisplay = document.getElementById('ss-score');
+        const ssResultText = document.getElementById('ss-result-text');
+        const ssStartBtn = document.getElementById('ss-start-btn');
+
+        // Game elements
+        const rockBtn = document.getElementById('rock-btn');
+        const paperBtn = document.getElementById('paper-btn');
+        const scissorsBtn = document.getElementById('scissors-btn');
+        const botChoiceText = document.getElementById('bot-choice-text');
+        const resultText = document.getElementById('result-text');
+        const botLabel = document.getElementById('bot-label');
+        const playerLabel = document.getElementById('player-label');
+
+        // Guess The Number game elements
+        const diceIcon = document.getElementById('dice-icon');
+        const gtnResultText = document.getElementById('gtn-result-text');
+        const gtnChoicesContainer = document.getElementById('gtn-choices');
+        const playAgainBtn = document.getElementById('play-again-btn');
+        const diceFaces = ['⚀', '⚁', '⚂', '⚃', '⚄', '⚅']; // 1 to 6
+        let diceSpinInterval = null; // Для хранения интервала смены цифр
+        const gtnTitle = document.getElementById('gtn-title');
+
+        // Settings elements
+        const settingsTitle = document.getElementById('settings-title');
+        const languageMenuBtn = document.getElementById('language-menu-btn');
+        const languageSubmenu = document.getElementById('language-submenu');
+        const settingsMainContent = document.getElementById('settings-main-content');
+        const languageSubmenuBackBtn = document.getElementById('language-submenu-back-btn');
+        const languageMenuTitle = document.getElementById('language-menu-title');
+        const themeMenuBtn = document.getElementById('theme-menu-btn');
+        const themeSubmenu = document.getElementById('theme-submenu');
+        const themeSubmenuBackBtn = document.getElementById('theme-submenu-back-btn');
+        const themeMenuTitle = document.getElementById('theme-menu-title');
+        const buttonColorMenuBtn = document.getElementById('button-color-menu-btn');
+        const buttonColorSubmenu = document.getElementById('button-color-submenu');
+        const buttonColorSubmenuBackBtn = document.getElementById('button-color-submenu-back-btn');
+        const buttonColorMenuTitle = document.getElementById('button-color-menu-title');
+        const emojiPackMenuBtn = document.getElementById('emoji-pack-menu-btn');
+        const emojiPackSubmenu = document.getElementById('emoji-pack-submenu');
+        const emojiPackSubmenuBackBtn = document.getElementById('emoji-pack-submenu-back-btn');
+        const emojiPackMenuTitle = document.getElementById('emoji-pack-menu-title');
+        const donateButton = document.getElementById('donate-button');
+        const donateMenu = document.getElementById('donate-menu');
+        const donateBackBtn = document.getElementById('donate-back-btn');
+        const donateAmountSelection = document.getElementById('donate-amount-selection');
+        const donatePaymentSelection = document.getElementById('donate-payment-selection');
+        const donatePaymentBackBtn = document.getElementById('donate-payment-back-btn');
+
+
+        const authContainer = document.getElementById('auth-container');
+
+        // Auth elements will be created dynamically or found when menus are open
+
+        let totalWins = 0; // Общий счетчик побед
+        let coins = 0; // Счетчик монет
+        let currentLanguage = 'en'; // Язык по умолчанию
+
+        const translations = {
+            en: {
+                mainTitle: "MAWNgames",
+                totalWinsPrefix: "Total Wins:",
+                coinsPrefix: "Coins:",
+                rpsButton: "Rock, Paper, Scissors",
+                gtnButton: "Guess the number",
+                halloweenEventButton: "Halloween Event",
+                halloweenTitle: "Pick a Safe Candy",
+                hrButton: "Horse Racing",
+                hrTitle: "Horse Racing",
+                hrInstruction: "Choose your horse!",
+                redHorse: "Red",
+                greenHorse: "Green",
+                bbButton: "Boss Battle",
+                bbTitle: "Defeat the Boss!",
+                bbWin: "YOU DEFEATED THE BOSS!",
+                bbLose: "THE BOSS GOT YOU!",
+                difficultyTitle: "Select Difficulty",
+                easy: "Easy",
+                normal: "Normal",
+                hard: "Hard",
+                mmButton: "Memory Match",
+                mmTitle: "Find the Pairs",
+                tttButton: "Tic-Tac-Toe",
+                tttTitle: "Tic-Tac-Toe",
+                wamButton: "Whac-A-Mole",
+                wamTitle: "Whac-A-Mole",
+                ssButton: "Simon Says",
+                ssTitle: "Simon Says",
+                score: "Score",
+                timer: "Time",
+                blueHorse: "Blue",
+                shopButton: "Shop",
+                shopTitle: "Item Shop",
+                buy: "Buy",
+                owned: "Owned",
+                settingsButton: "Settings",
+                botLabel: "BOT 🤖",
+                playerLabel: "PLAYER 🧑",
+                choicePrefix: "Choice:",
+                win: "WIN!",
+                lose: "LOSE!",
+                draw: "DRAW!",
+                rock: "Rock",
+                paper: "Paper",
+                scissors: "Scissors",
+                gtnTitle: "Guess the Number",
+                playAgain: "Play again",
+                settingsTitle: "Settings",
+                languageButton: "Language",
+                languageMenuTitle: "Select Language",
+                themeButton: "Theme",
+                themeMenuTitle: "Select Theme",
+                buttonColorButton: "Button Color",
+                buttonColorMenuTitle: "Select Button Color",
+                emojiPackButton: "Background Emojis",
+                emojiPackMenuTitle: "Select Emoji Pack",
+                login: "Login",
+                register: "Continue",
+                logout: "Logout",
+                welcome: "Welcome",
+                usernamePlaceholder: "Username",
+                passwordPlaceholder: "Password",
+                loginError: "Invalid username or password.",
+                registerError: "Username already taken.",
+                registerSuccess: "Registration successful! Please log in.",
+                emailPlaceholder: "Email",
+                switchToLogin: "Already have an account? Login",
+                switchToRegister: "Don't have an account? Register",
+                allFieldsRequired: "All fields are required.",
+                donateButton: "Donate",
+                donateTitle: "Support the Project",
+                donateDescription: "Your support helps keep the games running. Thank you!",
+                donatePaymentTitle: "Choose payment method",
+                applePay: "Pay with Apple Pay",
+                cardPay: "Pay with Bank Card",
+                paymentInfo: "This is a demo. No real payment will be processed.",
+            },
+            ru: {
+                mainTitle: "MAWNgames",
+                totalWinsPrefix: "Всего побед:",
+                coinsPrefix: "Монеты:",
+                rpsButton: "Камень, Ножницы, Бумага",
+                gtnButton: "Угадай число",
+                halloweenEventButton: "Хэллоуин Событие",
+                halloweenTitle: "Выберите безопасную конфету",
+                hrButton: "Скачки",
+                hrTitle: "Скачки",
+                hrInstruction: "Выберите свою лошадь!",
+                redHorse: "Красная",
+                greenHorse: "Зеленая",
+                bbButton: "Битва с боссом",
+                bbTitle: "Победи босса!",
+                bbWin: "ВЫ ПОБЕДИЛИ БОССА!",
+                bbLose: "БОСС ДОБРАЛСЯ ДО ВАС!",
+                difficultyTitle: "Выберите сложность",
+                easy: "Легко",
+                normal: "Нормально",
+                hard: "Сложно",
+                mmButton: "Найди пару",
+                mmTitle: "Найди одинаковые карточки",
+                tttButton: "Крестики-нолики",
+                tttTitle: "Крестики-нолики",
+                wamButton: "Ударь крота",
+                wamTitle: "Ударь крота",
+                ssButton: "Саймон говорит",
+                ssTitle: "Саймон говорит",
+                score: "Счет",
+                timer: "Время",
+                blueHorse: "Синяя",
+                shopButton: "Магазин",
+                shopTitle: "Магазин предметов",
+                buy: "Купить",
+                owned: "Куплено",
+                settingsButton: "Настройки",
+                botLabel: "БОТ 🤖",
+                playerLabel: "ИГРОК 🧑",
+                choicePrefix: "Выбор:",
+                win: "ПОБЕДА!",
+                lose: "ПРОИГРЫШ!",
+                draw: "НИЧЬЯ!",
+                rock: "Камень",
+                paper: "Бумага",
+                scissors: "Ножницы",
+                gtnTitle: "Угадай число",
+                playAgain: "Сыграть снова",
+                settingsTitle: "Настройки",
+                languageButton: "Язык",
+                languageMenuTitle: "Выберите язык",
+                themeButton: "Тема",
+                themeMenuTitle: "Выберите тему",
+                buttonColorButton: "Цвет кнопок",
+                buttonColorMenuTitle: "Выберите цвет кнопок",
+                emojiPackButton: "Фоновые эмодзи",
+                emojiPackMenuTitle: "Выберите набор эмодзи",
+                login: "Войти",
+                register: "Продолжить",
+                logout: "Выйти",
+                welcome: "Добро пожаловать",
+                usernamePlaceholder: "Имя пользователя",
+                passwordPlaceholder: "Пароль",
+                loginError: "Неверное имя пользователя или пароль.",
+                registerError: "Имя пользователя уже занято.",
+                registerSuccess: "Регистрация прошла успешно! Пожалуйста, войдите.",
+                emailPlaceholder: "Электронная почта",
+                switchToLogin: "Уже есть аккаунт? Войти",
+                switchToRegister: "Нет аккаунта? Зарегистрироваться",
+                allFieldsRequired: "Все поля обязательны для заполнения.",
+                donateButton: "Пожертвовать",
+                donateTitle: "Поддержать проект",
+                donateDescription: "Ваша поддержка помогает играм развиваться. Спасибо!",
+                donatePaymentTitle: "Выберите способ оплаты",
+                applePay: "Оплатить через Apple Pay",
+                cardPay: "Оплатить банковской картой",
+                paymentInfo: "Это демонстрация. Реальный платёж не будет обработан.",
+            },
+            es: { // Spanish
+                mainTitle: "MAWNgames",
+                totalWinsPrefix: "Victorias totales:",
+                coinsPrefix: "Monedas:",
+                rpsButton: "Piedra, Papel, Tijeras",
+                gtnButton: "Adivina el número",
+                halloweenEventButton: "Evento de Halloween",
+                halloweenTitle: "Elige un dulce seguro",
+                hrButton: "Carrera de Caballos",
+                hrTitle: "Carrera de Caballos",
+                hrInstruction: "¡Elige tu caballo!",
+                redHorse: "Rojo",
+                greenHorse: "Verde",
+                bbButton: "Batalla de Jefe",
+                bbTitle: "¡Derrota al Jefe!",
+                bbWin: "¡DERROTASTE AL JEFE!",
+                bbLose: "¡EL JEFE TE ATRAPÓ!",
+                difficultyTitle: "Seleccionar Dificultad",
+                easy: "Fácil",
+                normal: "Normal",
+                hard: "Difícil",
+                mmButton: "Juego de Memoria",
+                mmTitle: "Encuentra los Pares",
+                tttButton: "Tres en Raya",
+                tttTitle: "Tres en Raya",
+                wamButton: "Golpea al Topo",
+                wamTitle: "Golpea al Topo",
+                ssButton: "Simón Dice",
+                ssTitle: "Simón Dice",
+                score: "Puntuación",
+                timer: "Tiempo",
+                blueHorse: "Azul",
+                shopButton: "Tienda",
+                shopTitle: "Tienda de artículos",
+                buy: "Comprar",
+                owned: "Adquirido",
+                settingsButton: "Ajustes",
+                botLabel: "BOT 🤖",
+                playerLabel: "JUGADOR 🧑",
+                choicePrefix: "Elección:",
+                win: "¡GANASTE!",
+                lose: "¡PERDISTE!",
+                draw: "¡EMPATE!",
+                rock: "Piedra",
+                paper: "Papel",
+                scissors: "Tijeras",
+                gtnTitle: "Adivina el número",
+                playAgain: "Jugar de nuevo",
+                settingsTitle: "Ajustes",
+                languageButton: "Idioma",
+                languageMenuTitle: "Seleccionar idioma",
+                themeButton: "Tema",
+                themeMenuTitle: "Seleccionar tema",
+                buttonColorButton: "Color del botón",
+                buttonColorMenuTitle: "Seleccionar color del botón",
+                emojiPackButton: "Emojis de fondo",
+                emojiPackMenuTitle: "Seleccionar paquete de emojis",
+                login: "Iniciar sesión",
+                register: "Continuar",
+                logout: "Cerrar sesión",
+                welcome: "Bienvenido",
+                usernamePlaceholder: "Nombre de usuario",
+                passwordPlaceholder: "Contraseña",
+                loginError: "Nombre de usuario o contraseña no válidos.",
+                registerError: "El nombre de usuario ya existe.",
+                registerSuccess: "¡Registro exitoso! Por favor, inicie sesión.",
+                emailPlaceholder: "Correo electrónico",
+                switchToLogin: "¿Ya tienes una cuenta? Iniciar sesión",
+                switchToRegister: "¿No tienes una cuenta? Registrarse",
+                allFieldsRequired: "Todos los campos son obligatorios.",
+                donateButton: "Donar",
+                donateTitle: "Apoyar el proyecto",
+                donateDescription: "Tu apoyo ayuda a mantener los juegos en funcionamiento. ¡Gracias!",
+                donatePaymentTitle: "Elige método de pago",
+                applePay: "Pagar con Apple Pay",
+                cardPay: "Pagar con tarjeta bancaria",
+                paymentInfo: "Esto es una demostración. No se procesará ningún pago real.",
+            },
+            de: { // German
+                mainTitle: "MAWNgames",
+                totalWinsPrefix: "Gesamtsiege:",
+                coinsPrefix: "Münzen:",
+                rpsButton: "Schere, Stein, Papier",
+                gtnButton: "Errate die Zahl",
+                halloweenEventButton: "Halloween-Event",
+                halloweenTitle: "Wähle eine sichere Süßigkeit",
+                hrButton: "Pferderennen",
+                hrTitle: "Pferderennen",
+                hrInstruction: "Wähle dein Pferd!",
+                redHorse: "Rot",
+                greenHorse: "Grün",
+                bbButton: "Bosskampf",
+                bbTitle: "Besiege den Boss!",
+                bbWin: "DU HAST DEN BOSS BESIEGT!",
+                bbLose: "DER BOSS HAT DICH ERWISCHT!",
+                difficultyTitle: "Schwierigkeit wählen",
+                easy: "Einfach",
+                normal: "Normal",
+                hard: "Schwer",
+                mmButton: "Memory-Spiel",
+                mmTitle: "Finde die Paare",
+                tttButton: "Tic-Tac-Toe",
+                tttTitle: "Tic-Tac-Toe",
+                wamButton: "Hau den Maulwurf",
+                wamTitle: "Hau den Maulwurf",
+                ssButton: "Simon Sagt",
+                ssTitle: "Simon Sagt",
+                score: "Punktzahl",
+                timer: "Zeit",
+                blueHorse: "Blau",
+                shopButton: "Laden",
+                shopTitle: "Gegenstandsladen",
+                buy: "Kaufen",
+                owned: "Im Besitz",
+                settingsButton: "Einstellungen",
+                botLabel: "BOT 🤖",
+                playerLabel: "SPIELER 🧑",
+                choicePrefix: "Wahl:",
+                win: "GEWONNEN!",
+                lose: "VERLOREN!",
+                draw: "UNENTSCHIEDEN!",
+                rock: "Stein",
+                paper: "Papier",
+                scissors: "Schere",
+                gtnTitle: "Errate die Zahl",
+                playAgain: "Nochmal spielen",
+                settingsTitle: "Einstellungen",
+                languageButton: "Sprache",
+                languageMenuTitle: "Sprache auswählen",
+                themeButton: "Thema",
+                themeMenuTitle: "Thema auswählen",
+                buttonColorButton: "Knopffarbe",
+                buttonColorMenuTitle: "Knopffarbe auswählen",
+                emojiPackButton: "Hintergrund-Emojis",
+                emojiPackMenuTitle: "Emoji-Paket auswählen",
+                login: "Anmelden",
+                register: "Weiter",
+                logout: "Abmelden",
+                welcome: "Willkommen",
+                usernamePlaceholder: "Benutzername",
+                passwordPlaceholder: "Passwort",
+                loginError: "Ungültiger Benutzername oder Passwort.",
+                registerError: "Benutzername bereits vergeben.",
+                registerSuccess: "Registrierung erfolgreich! Bitte melden Sie sich an.",
+                emailPlaceholder: "Email",
+                switchToLogin: "Hast du schon ein Konto? Anmelden",
+                switchToRegister: "Kein Konto? Registrieren",
+                allFieldsRequired: "Alle Felder sind erforderlich.",
+                donateButton: "Spenden",
+                donateTitle: "Projekt unterstützen",
+                donateDescription: "Deine Unterstützung hilft, die Spiele am Laufen zu halten. Danke!",
+                donatePaymentTitle: "Zahlungsmethode wählen",
+                applePay: "Mit Apple Pay bezahlen",
+                cardPay: "Mit Bankkarte bezahlen",
+                paymentInfo: "Dies ist eine Demo. Es wird keine echte Zahlung verarbeitet.",
+            },
+            fi: { // Finnish
+                mainTitle: "MAWNgames",
+                totalWinsPrefix: "Voitot yhteensä:",
+                coinsPrefix: "Kolikot:",
+                rpsButton: "Kivi, Paperi, Sakset",
+                gtnButton: "Arvaa numero",
+                halloweenEventButton: "Halloween-tapahtuma",
+                halloweenTitle: "Valitse turvallinen karkki",
+                hrButton: "Hevoskilpailu",
+                hrTitle: "Hevoskilpailu",
+                hrInstruction: "Valitse hevosesi!",
+                redHorse: "Punainen",
+                greenHorse: "Vihreä",
+                bbButton: "Pomotaistelu",
+                bbTitle: "Päihitä pomo!",
+                bbWin: "PÄIHITIT POMON!",
+                bbLose: "POMO SAI SINUT KIINNI!",
+                difficultyTitle: "Valitse vaikeustaso",
+                easy: "Helppo",
+                normal: "Normaali",
+                hard: "Vaikea",
+                mmButton: "Muistipeli",
+                mmTitle: "Löydä parit",
+                tttButton: "Ristinolla",
+                tttTitle: "Ristinolla",
+                wamButton: "Lyö myyrää",
+                wamTitle: "Lyö myyrää",
+                ssButton: "Simon sanoo",
+                ssTitle: "Simon sanoo",
+                score: "Pisteet",
+                timer: "Aika",
+                blueHorse: "Sininen",
+                shopButton: "Kauppa",
+                shopTitle: "Esinekauppa",
+                buy: "Osta",
+                owned: "Omistettu",
+                settingsButton: "Asetukset",
+                botLabel: "BOTTI 🤖",
+                playerLabel: "PELAAJA 🧑",
+                choicePrefix: "Valinta:",
+                win: "VOITIT!",
+                lose: "HÄVISIT!",
+                draw: "TASAPELI!",
+                rock: "Kivi",
+                paper: "Paperi",
+                scissors: "Sakset",
+                gtnTitle: "Arvaa numero",
+                playAgain: "Pelaa uudelleen",
+                settingsTitle: "Asetukset",
+                languageButton: "Kieli",
+                languageMenuTitle: "Valitse kieli",
+                themeButton: "Teema",
+                themeMenuTitle: "Valitse teema",
+                buttonColorButton: "Painikkeen väri",
+                buttonColorMenuTitle: "Valitse painikkeen väri",
+                emojiPackButton: "Taustaemojit",
+                emojiPackMenuTitle: "Valitse emoji-paketti",
+                login: "Kirjaudu sisään",
+                register: "Jatka",
+                logout: "Kirjaudu ulos",
+                welcome: "Tervetuloa",
+                usernamePlaceholder: "Käyttäjätunnus",
+                passwordPlaceholder: "Salasana",
+                loginError: "Virheellinen käyttäjätunnus tai salasana.",
+                registerError: "Käyttäjätunnus on jo varattu.",
+                registerSuccess: "Rekisteröinti onnistui! Kirjaudu sisään.",
+                emailPlaceholder: "Sähköposti",
+                switchToLogin: "Onko sinulla jo tili? Kirjaudu sisään",
+                switchToRegister: "Eikö sinulla ole tiliä? Rekisteröidy",
+                allFieldsRequired: "Kaikki kentät ovat pakollisia.",
+                donateButton: "Lahjoita",
+                donateTitle: "Tue projektia",
+                donateDescription: "Tukesi auttaa pitämään pelit käynnissä. Kiitos!",
+                donatePaymentTitle: "Valitse maksutapa",
+                applePay: "Maksa Apple Paylla",
+                cardPay: "Maksa pankkikortilla",
+                paymentInfo: "Tämä on demo. Oikeaa maksua ei käsitellä.",
+            },
+            zh: { // Chinese
+                mainTitle: "MAWNgames",
+                totalWinsPrefix: "总胜利:",
+                coinsPrefix: "金币:",
+                rpsButton: "石头,剪刀,布",
+                gtnButton: "猜数字",
+                halloweenEventButton: "万圣节活动",
+                halloweenTitle: "选择一个安全的糖果",
+                hrButton: "赛马",
+                hrTitle: "赛马",
+                hrInstruction: "选择你的马!",
+                redHorse: "红马",
+                greenHorse: "绿马",
+                bbButton: "首领战",
+                bbTitle: "击败首领！",
+                bbWin: "你击败了首领！",
+                bbLose: "首领抓住了你！",
+                difficultyTitle: "选择难度",
+                easy: "简单",
+                normal: "普通",
+                hard: "困难",
+                mmButton: "记忆配对",
+                mmTitle: "找到所有配对",
+                tttButton: "井字游戏",
+                tttTitle: "井字游戏",
+                wamButton: "打地鼠",
+                wamTitle: "打地鼠",
+                ssButton: "西蒙说",
+                ssTitle: "西蒙说",
+                score: "分数",
+                timer: "时间",
+                blueHorse: "蓝马",
+                shopButton: "商店",
+                shopTitle: "道具商店",
+                buy: "购买",
+                owned: "已拥有",
+                settingsButton: "设置",
+                botLabel: "机器人 🤖",
+                playerLabel: "玩家 🧑",
+                choicePrefix: "选择:",
+                win: "胜利!",
+                lose: "失败!",
+                draw: "平局!",
+                rock: "石头",
+                paper: "布",
+                scissors: "剪刀",
+                gtnTitle: "猜数字",
+                playAgain: "再玩一次",
+                settingsTitle: "设置",
+                languageButton: "语言",
+                languageMenuTitle: "选择语言",
+                themeButton: "主题",
+                themeMenuTitle: "选择主题",
+                buttonColorButton: "按钮颜色",
+                buttonColorMenuTitle: "选择按钮颜色",
+                emojiPackButton: "背景表情",
+                emojiPackMenuTitle: "选择表情包",
+                login: "登录",
+                register: "继续",
+                logout: "登出",
+                welcome: "欢迎",
+                usernamePlaceholder: "用户名",
+                passwordPlaceholder: "密码",
+                loginError: "无效的用户名或密码。",
+                registerError: "用户名已被占用。",
+                registerSuccess: "注册成功！请登录。",
+                emailPlaceholder: "电子邮件",
+                switchToLogin: "已有账户？登录",
+                switchToRegister: "没有账户？注册",
+                allFieldsRequired: "所有字段都是必填项。",
+                donateButton: "捐赠",
+                donateTitle: "支持项目",
+                donateDescription: "您的支持有助于保持游戏运行。谢谢！",
+                donatePaymentTitle: "选择付款方式",
+                applePay: "使用 Apple Pay 付款",
+                cardPay: "使用银行卡付款",
+                paymentInfo: "这是一个演示。不会处理任何实际付款。",
+            },
+            uk: { // Ukrainian
+                mainTitle: "MAWNgames",
+                totalWinsPrefix: "Всього перемог:",
+                coinsPrefix: "Монети:",
+                rpsButton: "Камінь, Ножиці, Папір",
+                gtnButton: "Вгадай число",
+                halloweenEventButton: "Хелловінська подія",
+                halloweenTitle: "Виберіть безпечну цукерку",
+                hrButton: "Кінні перегони",
+                hrTitle: "Кінні перегони",
+                hrInstruction: "Виберіть свого коня!",
+                redHorse: "Червоний",
+                greenHorse: "Зелений",
+                bbButton: "Битва з босом",
+                bbTitle: "Переможи боса!",
+                bbWin: "ВИ ПЕРЕМОГЛИ БОСА!",
+                bbLose: "БОС ДІСТАВСЯ ДО ВАС!",
+                difficultyTitle: "Виберіть складність",
+                easy: "Легко",
+                normal: "Нормально",
+                hard: "Складно",
+                mmButton: "Знайди пару",
+                mmTitle: "Знайди однакові картки",
+                tttButton: "Хрестики-нулики",
+                tttTitle: "Хрестики-нулики",
+                wamButton: "Вдар крота",
+                wamTitle: "Вдар крота",
+                ssButton: "Саймон каже",
+                ssTitle: "Саймон каже",
+                score: "Рахунок",
+                timer: "Час",
+                blueHorse: "Синій",
+                shopButton: "Магазин",
+                shopTitle: "Магазин предметів",
+                buy: "Купити",
+                owned: "Придбано",
+                settingsButton: "Налаштування",
+                botLabel: "БОТ 🤖",
+                playerLabel: "ГРАВЕЦЬ 🧑",
+                choicePrefix: "Вибір:",
+                win: "ПЕРЕМОГА!",
+                lose: "ПРОГРАШ!",
+                draw: "НІЧИЯ!",
+                rock: "Камінь",
+                paper: "Папір",
+                scissors: "Ножиці",
+                gtnTitle: "Вгадай число",
+                playAgain: "Зіграти знову",
+                settingsTitle: "Налаштування",
+                languageButton: "Мова",
+                languageMenuTitle: "Вибрати мову",
+                themeButton: "Тема",
+                themeMenuTitle: "Вибрати тему",
+                buttonColorButton: "Колір кнопок",
+                buttonColorMenuTitle: "Вибрати колір кнопок",
+                emojiPackButton: "Фонові емодзі",
+                emojiPackMenuTitle: "Вибрати набір емодзі",
+                login: "Увійти",
+                register: "Продовжити",
+                logout: "Вийти",
+                welcome: "Ласкаво просимо",
+                usernamePlaceholder: "Ім'я користувача",
+                passwordPlaceholder: "Пароль",
+                loginError: "Неправильне ім'я користувача або пароль.",
+                registerError: "Ім'я користувача вже зайняте.",
+                registerSuccess: "Реєстрація успішна! Будь ласка, увійдіть.",
+                emailPlaceholder: "Електронна пошта",
+                switchToLogin: "Вже є аккаунт? Увійти",
+                switchToRegister: "Немає аккаунта? Зареєструватися",
+                allFieldsRequired: "Усі поля обов'язкові.",
+                donateButton: "Пожертвувати",
+                donateTitle: "Підтримати проект",
+                donateDescription: "Ваша підтримка допомагає іграм розвиватися. Дякуємо!",
+                donatePaymentTitle: "Виберіть спосіб оплати",
+                applePay: "Сплатити через Apple Pay",
+                cardPay: "Сплатити банківською карткою",
+                paymentInfo: "Це демонстрація. Справжній платіж не буде оброблено.",
+            },
+            pt: { // Portuguese
+                mainTitle: "MAWNgames",
+                totalWinsPrefix: "Total de vitórias:",
+                coinsPrefix: "Moedas:",
+                rpsButton: "Pedra, Papel, Tesoura",
+                gtnButton: "Adivinhe o número",
+                halloweenEventButton: "Evento de Halloween",
+                halloweenTitle: "Escolha um doce seguro",
+                hrButton: "Corrida de Cavalos",
+                hrTitle: "Corrida de Cavalos",
+                hrInstruction: "Escolha o seu cavalo!",
+                redHorse: "Vermelho",
+                greenHorse: "Verde",
+                bbButton: "Batalha de Chefe",
+                bbTitle: "Derrote o Chefe!",
+                bbWin: "VOCÊ DERROTOU O CHEFE!",
+                bbLose: "O CHEFE TE PEGOU!",
+                difficultyTitle: "Selecione a Dificuldade",
+                easy: "Fácil",
+                normal: "Normal",
+                hard: "Difícil",
+                mmButton: "Jogo da Memória",
+                mmTitle: "Encontre os Pares",
+                tttButton: "Jogo da Velha",
+                tttTitle: "Jogo da Velha",
+                wamButton: "Acerte a Toupeira",
+                wamTitle: "Acerte a Toupeira",
+                ssButton: "Simon Diz",
+                ssTitle: "Simon Diz",
+                score: "Pontuação",
+                timer: "Tempo",
+                blueHorse: "Azul",
+                shopButton: "Loja",
+                shopTitle: "Loja de Itens",
+                buy: "Comprar",
+                owned: "Adquirido",
+                settingsButton: "Configurações",
+                botLabel: "BOT 🤖",
+                playerLabel: "JOGADOR 🧑",
+                choicePrefix: "Escolha:",
+                win: "VENCEU!",
+                lose: "PERDEU!",
+                draw: "EMPATE!",
+                rock: "Pedra",
+                paper: "Papel",
+                scissors: "Tesoura",
+                gtnTitle: "Adivinhe o número",
+                playAgain: "Jogar novamente",
+                settingsTitle: "Configurações",
+                languageButton: "Idioma",
+                languageMenuTitle: "Selecione o idioma",
+                themeButton: "Tema",
+                themeMenuTitle: "Selecione o tema",
+                buttonColorButton: "Cor do botão",
+                buttonColorMenuTitle: "Selecione a cor do botão",
+                emojiPackButton: "Emojis de Fundo",
+                emojiPackMenuTitle: "Selecione o Pacote de Emojis",
+                login: "Entrar",
+                register: "Continuar",
+                logout: "Sair",
+                welcome: "Bem-vindo",
+                usernamePlaceholder: "Nome de usuário",
+                passwordPlaceholder: "Senha",
+                loginError: "Nome de usuário ou senha inválidos.",
+                registerError: "Nome de usuário já existe.",
+                registerSuccess: "Registro bem-sucedido! Por favor, faça o login.",
+                emailPlaceholder: "Email",
+                switchToLogin: "Já tem uma conta? Entrar",
+                switchToRegister: "Não tem uma conta? Registrar",
+                allFieldsRequired: "Todos os campos são obrigatórios.",
+                donateButton: "Doar",
+                donateTitle: "Apoie o Projeto",
+                donateDescription: "Seu apoio ajuda a manter os jogos funcionando. Obrigado!",
+                donatePaymentTitle: "Escolha a forma de pagamento",
+                applePay: "Pagar com Apple Pay",
+                cardPay: "Pagar com cartão bancário",
+                paymentInfo: "Isto é uma demonstração. Nenhum pagamento real será processado.",
+            },
+        };
+
+        const allShopItems = {
+            'theme_grey': {
+                name: 'Grey Theme',
+                price: 2,
+                type: 'theme',
+                value: 'grey',
+                displayName: 'Grey'
+            },
+            'button_color_red': {
+                name: 'Red Button Color',
+                price: 1,
+                type: 'button_color',
+                value: 'red',
+                displayName: 'Red'
+            }
+            ,
+            'theme_red': {
+                name: 'Red Theme',
+                price: 3,
+                type: 'theme',
+                value: 'red',
+                displayName: 'Red'
+            },
+            'theme_yellow': {
+                name: 'Yellow Theme',
+                price: 3,
+                type: 'theme',
+                value: 'yellow',
+                displayName: 'Yellow'
+            },
+            'theme_green': {
+                name: 'Green Theme',
+                price: 3,
+                type: 'theme',
+                value: 'green',
+                displayName: 'Green'
+            },
+            'theme_purple': {
+                name: 'Purple Theme',
+                price: 3,
+                type: 'theme',
+                value: 'purple',
+                displayName: 'Purple'
+            },
+            'emoji_pack_money': {
+                name: 'Money Emoji Pack',
+                price: 17,
+                type: 'emoji_pack',
+                value: ['💰', '💵', '🤑', '💎', '💸'],
+                displayName: 'Money'
+            },
+            'emoji_pack_food': {
+                name: 'Food Emoji Pack',
+                price: 5,
+                type: 'emoji_pack',
+                value: ['🍔', '🍕', '🍟', '🌭', '🍿'],
+                displayName: 'Food'
+            },
+            'emoji_pack_animals': {
+                name: 'Animals Emoji Pack',
+                price: 5,
+                type: 'emoji_pack',
+                value: ['🐶', '🐱', '🐭', '🐹', '🐰'],
+                displayName: 'Animals'
+            },
+            'theme_brown': {
+                name: 'Brown Theme',
+                price: 3,
+                type: 'theme',
+                value: '#A52A2A', // Brown color
+                displayName: 'Brown'
+            },
+            'emoji_pack_poop': {
+                name: 'Poop Emoji Pack',
+                price: 5,
+                type: 'emoji_pack',
+                value: ['💩', '🧻'],
+                displayName: 'Poop'
+            }
+        };
+
+        let currentShopItems = {};
+
+        const choices = ['Rock', 'Paper', 'Scissors'];
+
+        function closeAllMenus() {
+            rpsMenu.style.display = 'none';
+            gtnMenu.style.display = 'none';
+            settingsMenu.style.display = 'none';
+            halloweenMenu.style.display = 'none';
+            hrMenu.style.display = 'none';
+            shopMenu.style.display = 'none';
+            donateMenu.style.display = 'none';
+            mmMenu.style.display = 'none';
+            tttMenu.style.display = 'none';
+            wamMenu.style.display = 'none';
+            ssMenu.style.display = 'none';
+            bbMenu.style.display = 'none';
+            buttonColorSubmenu.style.display = 'none';
+            themeSubmenu.style.display = 'none';
+        }
+        
+        function applyLanguage(lang) {
+            currentLanguage = lang;
+            const t = translations[lang];
+
+            // Main page elements
+            document.getElementById('main-title').textContent = t.mainTitle;
+            document.getElementById('rps-button').textContent = t.rpsButton;
+            document.getElementById('gtn-button').textContent = t.gtnButton;
+            document.getElementById('halloween-event-button').textContent = `🎃 ${t.halloweenEventButton}`;
+            document.getElementById('hr-button').textContent = t.hrButton;
+            document.getElementById('shop-button').textContent = t.shopButton;
+            document.getElementById('donate-button').textContent = t.donateButton;
+            document.getElementById('wam-button').textContent = t.wamButton;
+            document.getElementById('ss-button').textContent = t.ssButton;
+            document.getElementById('ttt-button').textContent = t.tttButton;
+            document.getElementById('mm-button').textContent = t.mmButton;
+            document.getElementById('bb-button').textContent = `🎃 ${t.bbButton}`;
+            document.getElementById('settings-button').textContent = t.settingsButton; // This line was missing a semicolon in the previous context, but it's not the cause of the issue. The main issue is the initial HTML content.
+
+            // RPS Menu elements
+            botLabel.textContent = t.botLabel;
+            playerLabel.textContent = t.playerLabel;
+            rockBtn.textContent = t.rock;
+            paperBtn.textContent = t.paper;
+            scissorsBtn.textContent = t.scissors;
+
+            // GTN Menu elements
+            gtnTitle.textContent = t.gtnTitle;
+            playAgainBtn.textContent = t.playAgain;
+
+            // Halloween Menu elements
+            halloweenTitle.textContent = t.halloweenTitle;
+
+            // Horse Racing Menu elements
+            hrTitle.textContent = t.hrTitle;
+            hrInstruction.textContent = t.hrInstruction;
+            redHorseBtn.textContent = `🐎 ${t.redHorse}`;
+            greenHorseBtn.textContent = `🐎 ${t.greenHorse}`;
+            blueHorseBtn.textContent = `🐎 ${t.blueHorse}`;
+
+            // Shop Menu elements
+            shopTitle.textContent = t.shopTitle;
+
+            // Boss Battle Menu elements
+            bbTitle.textContent = t.bbTitle;
+            bbPlayAgainBtn.textContent = t.playAgain;
+            document.getElementById('bb-difficulty-title').textContent = t.difficultyTitle;
+            document.getElementById('bb-easy-btn').textContent = t.easy;
+            document.getElementById('bb-normal-btn').textContent = t.normal;
+            document.getElementById('bb-hard-btn').textContent = t.hard;
+
+            // Memory Match Menu elements
+            mmTitle.textContent = t.mmTitle;
+
+            // Tic-Tac-Toe Menu elements
+            tttTitle.textContent = t.tttTitle;
+            tttPlayAgainBtn.textContent = t.playAgain;
+
+            // Whac-A-Mole Menu elements
+            wamTitle.textContent = t.wamTitle;
+            document.getElementById('wam-score-label').textContent = t.score;
+            document.getElementById('wam-timer-label').textContent = t.timer;
+            wamPlayAgainBtn.textContent = t.playAgain;
+
+            // Simon Says Menu elements
+            ssTitle.textContent = t.ssTitle;
+            document.getElementById('ss-score-label').textContent = t.score;
+            ssStartBtn.textContent = t.playAgain; // "Play Again" can also mean "Start"
+
+            // Settings Menu elements
+            settingsTitle.textContent = t.settingsTitle;
+            languageMenuBtn.textContent = t.languageButton;
+            languageMenuTitle.textContent = t.languageMenuTitle;
+            themeMenuBtn.textContent = t.themeButton;
+            themeMenuTitle.textContent = t.themeMenuTitle;
+            buttonColorMenuBtn.textContent = t.buttonColorButton;
+            buttonColorMenuTitle.textContent = t.buttonColorMenuTitle;
+            emojiPackMenuBtn.textContent = t.emojiPackButton;
+            emojiPackMenuTitle.textContent = t.emojiPackMenuTitle;
+
+            // Donate Menu
+            document.getElementById('donate-title').textContent = t.donateTitle;
+            document.getElementById('donate-description').textContent = t.donateDescription;
+            document.getElementById('donate-payment-title').textContent = t.donatePaymentTitle;
+            document.getElementById('apple-pay-btn').textContent = t.applePay;
+            document.getElementById('card-pay-btn').textContent = t.cardPay;
+            document.getElementById('payment-info').textContent = t.paymentInfo;
+            
+            // Auth UI
+            updateAuthUI();
+
+            // Translate open menus
+            updateDisplay();
+        }
+
+        function updateDisplay() {
+            const t = translations[currentLanguage];
+            document.getElementById('total-wins-display').textContent = `${t.totalWinsPrefix} ${totalWins}`;
+            document.getElementById('coins-display').textContent = `₿ ${t.coinsPrefix} ${coins}`;
+        }
+
+        function updateCoinsDisplay() {
+            document.getElementById('coins-display').textContent = `₿ ${translations[currentLanguage].coinsPrefix} ${coins}`;
+        }
+
+        function updateTotalWinsDisplay() {
+            document.getElementById('total-wins-display').textContent = `${translations[currentLanguage].totalWinsPrefix} ${totalWins}`;
+        }
+
+        rpsButton.addEventListener('click', function() {
+            closeAllMenus(); // Сначала закрываем все меню
+            // When the button is clicked, show the menu
+            rpsMenu.style.display = 'block';
+
+        });
+
+        // Add a click event listener to the back button
+        rpsBackButton.addEventListener('click', function() {
+            // When the back button is clicked, hide the menu
+            rpsMenu.style.display = 'none';
+        });
+
+        // Add a click event listener to the GTN button
+        gtnButton.addEventListener('click', function() {
+            closeAllMenus();
+            startGtnGame();
+            gtnMenu.style.display = 'block';
+        });
+
+        // Add a click event listener to the GTN back button
+        gtnBackButton.addEventListener('click', function() {
+            gtnMenu.style.display = 'none';
+        });
+
+        // Add a click event listener to the Halloween Event button
+        halloweenEventButton.addEventListener('click', function() {
+            closeAllMenus();
+            startHalloweenGame();
+            halloweenMenu.style.display = 'block';
+        });
+
+        // Add a click event listener to the Halloween back button
+        halloweenBackButton.addEventListener('click', function() {
+            halloweenMenu.style.display = 'none';
+        });
+
+        // Add a click event listener to the Horse Racing button
+        hrButton.addEventListener('click', function() {
+            closeAllMenus();
+            startHorseRaceGame();
+            hrMenu.style.display = 'block';
+        });
+
+        // Add a click event listener to the Horse Racing back button
+        hrBackButton.addEventListener('click', function() {
+            hrMenu.style.display = 'none';
+        });
+
+        // Add a click event listener to the Shop button
+        shopButton.addEventListener('click', function() {
+            closeAllMenus();
+            renderShopItems();
+            shopMenu.style.display = 'block';
+        });
+
+        // Add a click event listener to the Shop back button
+        shopBackButton.addEventListener('click', function() {
+            shopMenu.style.display = 'none';
+        });
+
+        // Add a click event listener to the Settings button
+        settingsButton.addEventListener('click', function() {
+            closeAllMenus();
+            settingsMainContent.style.display = 'block';
+            languageSubmenu.style.display = 'none';
+            themeSubmenu.style.display = 'none';
+            emojiPackSubmenu.style.display = 'none';
+            languageSubmenu.style.display = 'none';
+            settingsMenu.style.display = 'block';
+        });
+
+        // Add a click event listener to the Settings back button
+        settingsBackButton.addEventListener('click', function() {
+            settingsMenu.style.display = 'none';
+        });
+
+        // Add a click event listener to the Donate button
+        donateButton.addEventListener('click', function() {
+            closeAllMenus();
+            donateAmountSelection.style.display = 'block';
+            donatePaymentSelection.style.display = 'none';
+            donateMenu.style.display = 'block';
+        });
+
+        donateBackBtn.addEventListener('click', function() {
+            donateMenu.style.display = 'none';
+        });
+
+        // Add a click event listener to the Boss Battle button
+        bbButton.addEventListener('click', function() {
+            closeAllMenus();
+            // Show difficulty selection first
+            document.getElementById('bb-difficulty-selection').style.display = 'block';
+            document.getElementById('bb-game-content').style.display = 'none';
+            bbMenu.style.display = 'block';
+        });
+
+        // Add a click event listener to the Boss Battle back button
+        bbBackButton.addEventListener('click', function() {
+            bbMenu.style.display = 'none';
+        });
+
+        // Add a click event listener to the Memory Match button
+        mmButton.addEventListener('click', function() {
+            closeAllMenus();
+            startMemoryMatchGame();
+            mmMenu.style.display = 'block';
+        });
+
+        // Add a click event listener to the Memory Match back button
+        mmBackButton.addEventListener('click', function() {
+            mmMenu.style.display = 'none';
+        });
+
+        // Add a click event listener to the Tic-Tac-Toe button
+        tttButton.addEventListener('click', function() {
+            closeAllMenus();
+            startTttGame();
+            tttMenu.style.display = 'block';
+        });
+
+        // Add a click event listener to the Tic-Tac-Toe back button
+        tttBackButton.addEventListener('click', function() {
+            tttMenu.style.display = 'none';
+        });
+
+        // Add a click event listener to the Whac-A-Mole button
+        wamButton.addEventListener('click', function() {
+            closeAllMenus();
+            startWamGame();
+            wamMenu.style.display = 'block';
+        });
+
+        // Add a click event listener to the Whac-A-Mole back button
+        wamBackButton.addEventListener('click', function() {
+            wamMenu.style.display = 'none';
+        });
+
+        // Add a click event listener to the Simon Says button
+        ssButton.addEventListener('click', function() {
+            closeAllMenus();
+            initializeSimonSaysGame();
+            ssMenu.style.display = 'block';
+        });
+
+        // Add a click event listener to the Simon Says back button
+        ssBackButton.addEventListener('click', function() {
+            ssMenu.style.display = 'none';
+        });
+
+        // Game logic
+        function playGame(playerChoice) {
+            // Disable buttons to prevent spamming
+            rockBtn.disabled = true;
+            paperBtn.disabled = true;
+            scissorsBtn.disabled = true;
+
+            // Bot makes a random choice
+            const botChoice = choices[Math.floor(Math.random() * choices.length)]; // Choices are still in English for internal logic
+            botChoiceText.textContent = `${translations[currentLanguage].choicePrefix} ${translations[currentLanguage][botChoice.toLowerCase()]}`;
+
+            // Determine the winner
+            if (playerChoice === botChoice) {
+                resultText.textContent = translations[currentLanguage].draw;
+                resultText.style.color = 'gray';
+            } else if (
+                (playerChoice === 'Rock' && botChoice === 'Scissors') ||
+                (playerChoice === 'Paper' && botChoice === 'Rock') ||
+                (playerChoice === 'Scissors' && botChoice === 'Paper')
+            ) {
+                resultText.textContent = translations[currentLanguage].win;
+                resultText.style.color = 'green';
+                totalWins++;
+                coins += 1;
+            } else {
+                resultText.textContent = translations[currentLanguage].lose;
+                resultText.style.color = 'red';
+            }
+
+            updateDisplay();
+
+            setTimeout(function() {
+                resultText.textContent = '';
+                botChoiceText.textContent = `${translations[currentLanguage].choicePrefix} ?`;
+            }, 6000);
+
+            // Re-enable buttons after 3 seconds
+            setTimeout(function() {
+                rockBtn.disabled = false;
+                paperBtn.disabled = false;
+                scissorsBtn.disabled = false;
+                updateDisplay(); // Обновляем отображение счета после сброса
+            }, 3000);
+        }
+
+        // Add event listeners to player's choice buttons
+        rockBtn.addEventListener('click', function() {
+            playGame('Rock');
+        });
+        paperBtn.addEventListener('click', function() {
+            playGame('Paper');
+        });
+        scissorsBtn.addEventListener('click', function() {
+            playGame('Scissors');
+        });
+
+        // --- Guess The Number Logic ---
+
+        function startGtnGame() {
+            // 1. Reset state
+            gtnResultText.textContent = '';
+            playAgainBtn.style.display = 'none';
+            gtnChoicesContainer.style.display = 'block';
+            gtnChoicesContainer.innerHTML = ''; // Clear old buttons
+
+            // 2. Start spinning
+            if (diceSpinInterval) clearInterval(diceSpinInterval); // Очищаем старый интервал, если он есть
+            diceIcon.classList.add('spinning');
+            diceSpinInterval = setInterval(() => {
+                // Показываем случайную грань кости каждые 100мс
+                const randomFace = diceFaces[Math.floor(Math.random() * diceFaces.length)];
+                diceIcon.textContent = randomFace;
+            }, 100);
+
+            // 3. Create number buttons
+            for (let i = 1; i <= 6; i++) {
+                const button = document.createElement('button');
+                button.textContent = i;
+                button.addEventListener('click', () => handleGtnChoice(i));
+                gtnChoicesContainer.appendChild(button);
+            }
+        }
+
+        function handleGtnChoice(playerGuess) {
+            // 1. Stop spinning
+            clearInterval(diceSpinInterval); // Останавливаем смену цифр
+            diceIcon.classList.remove('spinning'); // Останавливаем CSS-вращение
+
+            // 2. Get random dice result (number from 1 to 6)
+            const diceResult = Math.floor(Math.random() * 6) + 1;
+
+            // 3. Update dice icon to show result
+            diceIcon.textContent = diceFaces[diceResult - 1];
+
+            // 4. Check for win/loss
+            if (playerGuess === diceResult) {
+                gtnResultText.textContent = translations[currentLanguage].win;
+                gtnResultText.style.color = 'green';
+                totalWins++;
+                coins += 1;
+            } else {
+                gtnResultText.textContent = translations[currentLanguage].lose;
+                gtnResultText.style.color = 'red';
+            }
+
+            gtnChoicesContainer.style.display = 'none';
+            playAgainBtn.style.display = 'inline-block';
+            updateDisplay();
+        }
+
+        // Event listener for "Play again" button
+        playAgainBtn.addEventListener('click', startGtnGame);
+
+        // --- Halloween Event Logic ---
+        function startHalloweenGame() {
+            // 1. Reset state
+            halloweenResultText.textContent = '';
+            halloweenCandiesContainer.innerHTML = ''; // Clear old candies
+
+            // 2. Create candies
+            const numberOfCandies = 5;
+            const winningCandyIndex = Math.floor(Math.random() * numberOfCandies);
+            const candyEmojis = ['🍬', '🍭', '🍫', '🍩', '🍪'];
+
+            for (let i = 0; i < numberOfCandies; i++) {
+                const button = document.createElement('button');
+                button.textContent = candyEmojis[i % candyEmojis.length]; // Use different emojis
+                button.dataset.isWinner = (i === winningCandyIndex);
+                button.addEventListener('click', handleCandyClick);
+                halloweenCandiesContainer.appendChild(button);
+            }
+        }
+
+        function handleCandyClick(event) {
+            const clickedButton = event.target;
+            const isWinner = clickedButton.dataset.isWinner === 'true';
+
+            if (isWinner) {
+                halloweenResultText.textContent = translations[currentLanguage].win;
+                halloweenResultText.style.color = 'green';
+                totalWins++;
+                coins += 3; // 3 монеты за победу в хэллоуинской игре
+            } else {
+                halloweenResultText.textContent = translations[currentLanguage].lose;
+                halloweenResultText.style.color = 'red';
+            }
+
+            updateDisplay();
+            // Disable all candy buttons after a choice is made
+            document.querySelectorAll('#halloween-candies-container button').forEach(btn => {
+                btn.disabled = true;
+            });
+
+            // Restart the game after 6 seconds
+            setTimeout(() => {
+                startHalloweenGame();
+            }, 6000);
+        }
+
+        // --- Horse Racing Logic ---
+        let raceInterval = null;
+        let playerHorse = null;
+
+        function startHorseRaceGame() {
+            if (raceInterval) clearInterval(raceInterval);
+            hrResultText.textContent = '';
+            hrTrackContainer.style.display = 'none';
+            document.querySelector('#hr-menu .horse-selection').style.display = 'block';
+
+            // Reset horse positions
+            document.querySelectorAll('.horse').forEach(horse => {
+                horse.style.left = '10px';
+            });
+
+            // Set button colors
+            redHorseBtn.style.backgroundColor = 'red';
+            redHorseBtn.style.color = 'white';
+            greenHorseBtn.style.backgroundColor = 'green';
+            greenHorseBtn.style.color = 'white';
+            blueHorseBtn.style.backgroundColor = 'blue';
+            blueHorseBtn.style.color = 'white';
+        }
+
+        function handleHorseSelection(color) {
+            playerHorse = color;
+            document.querySelector('#hr-menu .horse-selection').style.display = 'none';
+            hrTrackContainer.style.display = 'block';
+            runTheRace();
+        }
+
+        function runTheRace() {
+            const horses = {
+                red: document.getElementById('red-horse'),
+                green: document.getElementById('green-horse'),
+                blue: document.getElementById('blue-horse')
+            };
+            const finishLine = hrTrackContainer.offsetWidth * 0.85; // 85% of track width
+
+            raceInterval = setInterval(() => {
+                let winner = null;
+
+                for (const color in horses) {
+                    const horse = horses[color];
+                    let currentPos = parseFloat(horse.style.left) || 10;
+                    currentPos += Math.random() * 10; // Move by a random amount
+                    horse.style.left = `${currentPos}px`;
+
+                    if (currentPos >= finishLine) {
+                        winner = color;
+                        break; // We have a winner
+                    }
+                }
+
+                if (winner) {
+                    clearInterval(raceInterval);
+                    hrResultText.textContent = (winner === playerHorse) ? translations[currentLanguage].win : translations[currentLanguage].lose;
+                    hrResultText.style.color = (winner === playerHorse) ? 'green' : 'red';
+                    if (winner === playerHorse) {
+                        totalWins++;
+                        coins += 1;
+                    }
+                    updateDisplay();
+                    setTimeout(startHorseRaceGame, 5000); // Restart after 5 seconds
+                }
+            }, 100); // Update every 100ms
+        }
+
+        // --- Boss Battle Logic ---
+        let bossHealth;
+        let bossGameInterval;
+        let isBossGameActive;
+        let currentBossMaxHealth;
+        let currentBossSpeed;
+        let currentBossDifficulty;
+
+        const BOSS_DIFFICULTY = {
+            easy:   { health: 30, speed: 1.5 }, // Увеличено здоровье и скорость
+            normal: { health: 45, speed: 3 },   // Увеличено здоровье и скорость
+            hard:   { health: 70, speed: 5 }    // Увеличено здоровье и скорость
+        };
+        const BOSS_START_POS = 20;
+        const PLAYER_POS = 20;
+
+        function startBossBattleGame(difficulty) {
+            if (bossGameInterval) clearInterval(bossGameInterval);
+
+            currentBossDifficulty = difficulty;
+            const settings = BOSS_DIFFICULTY[difficulty];
+            currentBossMaxHealth = settings.health;
+            currentBossSpeed = settings.speed;
+
+            // Hide difficulty selection, show game
+            document.getElementById('bb-difficulty-selection').style.display = 'none';
+            document.getElementById('bb-game-content').style.display = 'block';
+
+            isBossGameActive = true;
+            bossHealth = currentBossMaxHealth;
+            bbResultText.textContent = '';
+            bbPlayAgainBtn.style.display = 'none';
+            bbBoss.style.right = `${BOSS_START_POS}px`;
+            bbBoss.style.cursor = 'pointer';
+            updateBossHealthBar();
+
+            bossGameInterval = setInterval(moveBoss, 100);
+        }
+
+        function moveBoss() {
+            if (!isBossGameActive) return;
+
+            let currentPos = parseFloat(bbBoss.style.right);
+            currentPos += currentBossSpeed;
+            bbBoss.style.right = `${currentPos}px`;
+
+            // Check for lose condition
+            const gameAreaWidth = bbBoss.parentElement.offsetWidth;
+            const bossWidth = bbBoss.offsetWidth;
+            if (currentPos + bossWidth >= gameAreaWidth - PLAYER_POS) {
+                endBossGame(false); // Player loses
+            }
+        }
+
+        function handleBossClick() {
+            if (!isBossGameActive) return;
+
+            bossHealth--;
+            updateBossHealthBar();
+
+            if (bossHealth <= 0) {
+                endBossGame(true); // Player wins
+            }
+        }
+
+        function updateBossHealthBar() {
+            const healthPercentage = (bossHealth / currentBossMaxHealth) * 100;
+            bbBossHealthBar.style.width = `${healthPercentage}%`;
+        }
+
+        function endBossGame(playerWon) {
+            clearInterval(bossGameInterval);
+            isBossGameActive = false;
+            bbBoss.style.cursor = 'default';
+            bbResultText.textContent = playerWon ? translations[currentLanguage].bbWin : translations[currentLanguage].bbLose;
+            bbResultText.style.color = playerWon ? 'green' : 'red';
+            bbPlayAgainBtn.style.display = 'inline-block';
+            if (playerWon) {
+                totalWins++;
+                let coinsAwarded = 0;
+                if (currentBossDifficulty === 'easy') {
+                    coinsAwarded = 2;
+                } else if (currentBossDifficulty === 'normal') {
+                    coinsAwarded = 3;
+                } else if (currentBossDifficulty === 'hard') {
+                    coinsAwarded = 10;
+                }
+                coins += coinsAwarded;
+            }
+            updateDisplay();
+        }
+
+        // --- Memory Match Logic ---
+        let mmFirstCard = null;
+        let mmSecondCard = null;
+        let mmLockBoard = false;
+        let mmMatchedPairs = 0;
+
+        function startMemoryMatchGame() {
+            mmBoard.innerHTML = '';
+            mmResultText.textContent = '';
+            mmMatchedPairs = 0;
+            mmLockBoard = false;
+            mmFirstCard = null;
+            mmSecondCard = null;
+
+            const emojis = ['🐶', '🐱', '🐭', '🐹', '🐰', '🦊', '🐻', '🐼'];
+            const cards = [...emojis, ...emojis];
+
+            // Shuffle cards
+            cards.sort(() => 0.5 - Math.random());
+
+            cards.forEach(emoji => {
+                const cardElement = document.createElement('div');
+                cardElement.classList.add('mm-card');
+                cardElement.dataset.emoji = emoji;
+
+                cardElement.innerHTML = `
+                    <div class="mm-card-face mm-card-front">${emoji}</div>
+                    <div class="mm-card-face mm-card-back">❓</div>
+                `;
+
+                cardElement.addEventListener('click', handleCardClick);
+                mmBoard.appendChild(cardElement);
+            });
+        }
+
+        function handleCardClick(e) {
+            if (mmLockBoard) return;
+            const clickedCard = e.currentTarget;
+            if (clickedCard === mmFirstCard) return;
+
+            clickedCard.classList.add('flipped');
+
+            if (!mmFirstCard) {
+                mmFirstCard = clickedCard;
+                return;
+            }
+
+            mmSecondCard = clickedCard;
+            mmLockBoard = true;
+
+            checkForMatch();
+        }
+
+        function checkForMatch() {
+            const isMatch = mmFirstCard.dataset.emoji === mmSecondCard.dataset.emoji;
+            isMatch ? disableCards() : unflipCards();
+        }
+
+        function disableCards() {
+            mmFirstCard.removeEventListener('click', handleCardClick);
+            mmSecondCard.removeEventListener('click', handleCardClick);
+            mmMatchedPairs++;
+            resetBoard();
+
+            if (mmMatchedPairs === 8) { // 8 pairs to win
+                mmResultText.textContent = translations[currentLanguage].win;
+                mmResultText.style.color = 'green';
+                totalWins++;
+                coins += 2;
+                updateDisplay();
+                setTimeout(startMemoryMatchGame, 5000);
+            }
+        }
+
+        function unflipCards() {
+            setTimeout(() => {
+                mmFirstCard.classList.remove('flipped');
+                mmSecondCard.classList.remove('flipped');
+                resetBoard();
+            }, 1000);
+        }
+
+        function resetBoard() {
+            [mmFirstCard, mmSecondCard, mmLockBoard] = [null, null, false];
+        }
+
+        // --- Tic-Tac-Toe Logic ---
+        let tttBoardState = ['', '', '', '', '', '', '', '', ''];
+        let tttCurrentPlayer = 'X';
+        let tttIsGameActive = true;
+
+        function startTttGame() {
+            tttBoardState = ['', '', '', '', '', '', '', '', ''];
+            tttIsGameActive = true;
+            tttCurrentPlayer = 'X';
+            tttResultText.textContent = '';
+            tttPlayAgainBtn.style.display = 'none';
+            tttBoard.innerHTML = '';
+            for (let i = 0; i < 9; i++) {
+                const cell = document.createElement('div');
+                cell.classList.add('ttt-cell');
+                cell.dataset.index = i;
+                cell.addEventListener('click', handleTttCellClick);
+                tttBoard.appendChild(cell);
+            }
+        }
+
+        function handleTttCellClick(e) {
+            const clickedCell = e.target;
+            const clickedCellIndex = parseInt(clickedCell.dataset.index);
+
+            if (tttBoardState[clickedCellIndex] !== '' || !tttIsGameActive || tttCurrentPlayer !== 'X') {
+                return;
+            }
+
+            tttBoardState[clickedCellIndex] = 'X';
+            clickedCell.textContent = 'X';
+            tttCurrentPlayer = 'O';
+
+            if (checkTttWinner()) {
+                return;
+            }
+
+            // Bot's turn
+            setTimeout(botTttMove, 500);
+        }
+
+        function botTttMove() {
+            // --- Human-like Bot Logic ---
+            let move = findWinningMove('O'); // 1. Win
+            if (move === -1) move = findWinningMove('X'); // 2. Block
+            if (move === -1) move = findForkMove('O'); // 3. Create Fork
+            if (move === -1) move = findForkMove('X'); // 4. Block Fork
+            if (move === -1) { // 5. Center
+                if (tttBoardState[4] === '') move = 4;
+            }
+            if (move === -1) { // 6. Opposite corner
+                const opposites = { 0: 8, 2: 6, 6: 2, 8: 0 };
+                for (const corner in opposites) {
+                    if (tttBoardState[corner] === 'X' && tttBoardState[opposites[corner]] === '') {
+                        move = opposites[corner];
+                        break;
+                    }
+                }
+            }
+            if (move === -1) { // 7. Empty corner
+                const corners = [0, 2, 6, 8];
+                const availableCorners = corners.filter(i => tttBoardState[i] === '');
+                if (availableCorners.length > 0) {
+                    move = availableCorners[Math.floor(Math.random() * availableCorners.length)];
+                }
+            }
+            if (move === -1) { // 8. Empty side
+                const sides = [1, 3, 5, 7];
+                const availableSides = sides.filter(i => tttBoardState[i] === '');
+                if (availableSides.length > 0) {
+                    move = availableSides[Math.floor(Math.random() * availableSides.length)];
+                }
+            }
+
+            // Fallback to any random move if all else fails (should not happen in a normal game)
+            if (move === -1) {
+                 const availableCells = tttBoardState.map((cell, index) => cell === '' ? index : -1).filter(index => index !== -1);
+                 if (availableCells.length > 0) {
+                    move = availableCells[Math.floor(Math.random() * availableCells.length)];
+                 }
+            }
+
+            if (move === -1) return; // No moves left
+            
+            tttBoardState[move] = 'O';
+            document.querySelector(`.ttt-cell[data-index='${move}']`).textContent = 'O';
+            tttCurrentPlayer = 'X';
+
+            checkTttWinner();
+        }
+
+        function findWinningMove(player) {
+            for (let i = 0; i < 9; i++) {
+                if (tttBoardState[i] === '') {
+                    tttBoardState[i] = player;
+                    if (isTttWinning(player)) {
+                        tttBoardState[i] = ''; // Reset board
+                        return i;
+                    }
+                    tttBoardState[i] = ''; // Reset board
+                }
+            }
+            return -1;
+        }
+
+        function findForkMove(player) {
+            for (let i = 0; i < 9; i++) {
+                if (tttBoardState[i] === '') {
+                    tttBoardState[i] = player; // Try the move
+                    let winningOpportunities = 0;
+                    for (let j = 0; j < 9; j++) {
+                        if (tttBoardState[j] === '') {
+                            tttBoardState[j] = player;
+                            if (isTttWinning(player)) {
+                                winningOpportunities++;
+                            }
+                            tttBoardState[j] = ''; // Undo inner check
+                        }
+                    }
+                    tttBoardState[i] = ''; // Undo the move
+
+                    if (winningOpportunities >= 2) {
+                        return i;
+                    }
+                }
+            }
+            return -1;
+        }
+
+        function isTttWinning(player) {
+            const winningConditions = [
+                [0, 1, 2], [3, 4, 5], [6, 7, 8],
+                [0, 3, 6], [1, 4, 7], [2, 5, 8],
+                [0, 4, 8], [2, 4, 6]
+            ];
+            for (let condition of winningConditions) {
+                const [a, b, c] = condition;
+                if (tttBoardState[a] === player && tttBoardState[b] === player && tttBoardState[c] === player) {
+                    return true;
+                }
+            }
+            return false;
+        }
+
+        function checkTttWinner() {
+            const winningConditions = [
+                [0, 1, 2], [3, 4, 5], [6, 7, 8], // Rows
+                [0, 3, 6], [1, 4, 7], [2, 5, 8], // Columns
+                [0, 4, 8], [2, 4, 6]             // Diagonals
+            ];
+
+            for (let condition of winningConditions) {
+                const [a, b, c] = condition;
+                if (tttBoardState[a] && tttBoardState[a] === tttBoardState[b] && tttBoardState[a] === tttBoardState[c]) {
+                    tttIsGameActive = false;
+                    const winner = tttBoardState[a];
+                    tttResultText.textContent = (winner === 'X') ? translations[currentLanguage].win : translations[currentLanguage].lose;
+                    tttResultText.style.color = (winner === 'X') ? 'green' : 'red';
+                    if (winner === 'X') { totalWins++; coins++; }
+                    updateDisplay();
+                    tttPlayAgainBtn.style.display = 'inline-block';
+                    return true;
+                }
+            }
+
+            if (!tttBoardState.includes('')) {
+                tttIsGameActive = false;
+                tttResultText.textContent = translations[currentLanguage].draw;
+                tttResultText.style.color = 'gray';
+                tttPlayAgainBtn.style.display = 'inline-block';
+                return true;
+            }
+            return false;
+        }
+
+        // --- Whac-A-Mole Logic ---
+        let wamScore = 0;
+        let wamTimeLeft = 20;
+        let wamTimerId = null;
+        let wamMoleTimerId = null;
+        let wamIsGameActive = false;
+
+        function startWamGame() {
+            wamScore = 0;
+            wamTimeLeft = 20;
+            wamIsGameActive = true;
+            wamScoreDisplay.textContent = wamScore;
+            wamTimerDisplay.textContent = wamTimeLeft;
+            wamResultText.textContent = '';
+            wamPlayAgainBtn.style.display = 'none';
+            wamBoard.innerHTML = '';
+
+            for (let i = 0; i < 9; i++) {
+                const hole = document.createElement('div');
+                hole.classList.add('wam-hole');
+                hole.id = 'wam-hole-' + i;
+                hole.addEventListener('click', handleMoleClick);
+                wamBoard.appendChild(hole);
+            }
+
+            if (wamTimerId) clearInterval(wamTimerId);
+            if (wamMoleTimerId) clearInterval(wamMoleTimerId);
+
+            wamTimerId = setInterval(wamCountdown, 1000);
+            wamMoleTimerId = setInterval(randomMole, 800);
+        }
+
+        function wamCountdown() {
+            wamTimeLeft--;
+            wamTimerDisplay.textContent = wamTimeLeft;
+            if (wamTimeLeft <= 0) {
+                clearInterval(wamTimerId);
+                clearInterval(wamMoleTimerId);
+                wamIsGameActive = false;
+                wamResultText.textContent = `${translations[currentLanguage].score}: ${wamScore}`;
+                wamPlayAgainBtn.style.display = 'inline-block';
+                if (wamScore > 0) {
+                    const coinsWon = Math.floor(wamScore / 5); // 1 coin for every 5 points
+                    if (coinsWon > 0) {
+                        totalWins++;
+                        coins += coinsWon;
+                        updateDisplay();
+                    }
+                }
+            }
+        }
+
+        function randomMole() {
+            document.querySelectorAll('.wam-hole').forEach(hole => {
+                hole.innerHTML = '';
+            });
+
+            const randomIndex = Math.floor(Math.random() * 9);
+            const randomHole = document.getElementById('wam-hole-' + randomIndex);
+            randomHole.innerHTML = '<span class="wam-mole">🐹</span>';
+        }
+
+        function handleMoleClick(e) {
+            if (!wamIsGameActive) return;
+            if (e.target.classList.contains('wam-mole')) {
+                wamScore++;
+                wamScoreDisplay.textContent = wamScore;
+                e.currentTarget.innerHTML = ''; // Remove mole on click
+            }
+        }
+
+        // --- Simon Says Logic ---
+        let ssSequence = [];
+        let ssPlayerSequence = [];
+        let ssScore = 0;
+        let ssIsPlayersTurn = false;
+        const ssColors = ['red', 'green', 'blue', 'yellow'];
+
+        function initializeSimonSaysGame() {
+            ssScore = 0;
+            ssScoreDisplay.textContent = ssScore;
+            ssResultText.textContent = '';
+            ssStartBtn.style.display = 'inline-block';
+            ssButtonsContainer.innerHTML = '';
+            ssColors.forEach(color => {
+                const button = document.createElement('div');
+                button.classList.add('ss-button');
+                button.id = `ss-${color}`;
+                button.style.backgroundColor = color;
+                button.addEventListener('click', () => handleSimonClick(color));
+                ssButtonsContainer.appendChild(button);
+            });
+        }
+
+        function startSimonSaysRound() {
+            ssStartBtn.style.display = 'none';
+            ssResultText.textContent = '';
+            ssSequence = [];
+            ssPlayerSequence = [];
+            ssScore = 0;
+            ssScoreDisplay.textContent = ssScore;
+            addStepToSequence();
+        }
+
+        function addStepToSequence() {
+            ssIsPlayersTurn = false;
+            const randomColor = ssColors[Math.floor(Math.random() * ssColors.length)];
+            ssSequence.push(randomColor);
+            playSequence();
+        }
+
+        function playSequence() {
+            let i = 0;
+            const interval = setInterval(() => {
+                const color = ssSequence[i];
+                const button = document.getElementById(`ss-${color}`);
+                button.classList.add('active');
+                setTimeout(() => button.classList.remove('active'), 400);
+                i++;
+                if (i >= ssSequence.length) {
+                    clearInterval(interval);
+                    ssIsPlayersTurn = true;
+                    ssPlayerSequence = [];
+                }
+            }, 800);
+        }
+
+        function handleSimonClick(color) {
+            if (!ssIsPlayersTurn) return;
+            ssPlayerSequence.push(color);
+            const button = document.getElementById(`ss-${color}`);
+            button.classList.add('active');
+            setTimeout(() => button.classList.remove('active'), 200);
+
+            const lastIndex = ssPlayerSequence.length - 1;
+            if (ssPlayerSequence[lastIndex] !== ssSequence[lastIndex]) {
+                ssResultText.textContent = translations[currentLanguage].lose;
+                ssResultText.style.color = 'red';
+                ssStartBtn.style.display = 'inline-block';
+                ssIsPlayersTurn = false;
+                return;
+            }
+
+            if (ssPlayerSequence.length === ssSequence.length) {
+                ssScore++;
+                ssScoreDisplay.textContent = ssScore;
+                if (ssScore > 0 && ssScore % 3 === 0) { // Award 1 coin every 3 levels
+                    coins++;
+                    totalWins++; // Count each milestone as a "win"
+                    updateDisplay();
+                }
+                ssIsPlayersTurn = false;
+                setTimeout(addStepToSequence, 1000);
+            }
+        }
+
+        // --- Shop Logic ---
+        function renderShopItems() {
+            const container = document.getElementById('shop-items-container');
+            container.innerHTML = '';
+            const t = translations[currentLanguage];
+            const userPurchases = getUserPurchases();
+
+            for (const itemId in currentShopItems) {
+                const item = currentShopItems[itemId];
+                const itemDiv = document.createElement('div');
+                itemDiv.className = 'shop-item';
+
+                const nameSpan = document.createElement('span');
+                nameSpan.className = 'shop-item-name';
+                nameSpan.textContent = item.name;
+
+                const priceSpan = document.createElement('span');
+                priceSpan.className = 'shop-item-price';
+                priceSpan.textContent = `₿ ${item.price}`;
+
+                const buyButton = document.createElement('button');
+                buyButton.className = 'shop-item-buy-btn';
+                
+                if (userPurchases.includes(itemId)) {
+                    buyButton.textContent = t.owned;
+                    buyButton.disabled = true;
+                } else {
+                    buyButton.textContent = t.buy;
+                    buyButton.disabled = coins < item.price;
+                    buyButton.onclick = () => buyItem(itemId);
+                }
+
+                itemDiv.appendChild(nameSpan);
+                itemDiv.appendChild(priceSpan);
+                itemDiv.appendChild(buyButton);
+                container.appendChild(itemDiv);
+            }
+        }
+
+        function buyItem(itemId) {
+            const item = currentShopItems[itemId];
+            coins -= item.price;
+            addUserPurchase(itemId);
+            updateDisplay();
+            if (item.type === 'emoji_pack') {
+                createEmojiPackButtons(); // Re-create emoji pack buttons to include the new one
+            }
+            renderShopItems(); // Re-render to show "Owned"
+        }
+
+        function rotateShopItems() {
+            const itemKeys = Object.keys(allShopItems);
+            const newShop = {};
+            const numItemsInShop = 4; // How many items to show at once
+
+            while (Object.keys(newShop).length < numItemsInShop && itemKeys.length > 0) {
+                const randomIndex = Math.floor(Math.random() * itemKeys.length);
+                const randomItemId = itemKeys.splice(randomIndex, 1)[0]; // Pick and remove
+                newShop[randomItemId] = allShopItems[randomItemId];
+            }
+            currentShopItems = newShop;
+            if (shopMenu.style.display === 'block') {
+                renderShopItems();
+            }
+        }
+
+        // --- Settings Logic ---
+        languageMenuBtn.addEventListener('click', () => {
+            settingsMainContent.style.display = 'none';
+            languageSubmenu.style.display = 'block';
+        });
+
+        languageSubmenuBackBtn.addEventListener('click', () => {
+            languageSubmenu.style.display = 'none';
+            settingsMainContent.style.display = 'block';
+        });
+
+        themeMenuBtn.addEventListener('click', () => {
+            settingsMainContent.style.display = 'none';
+            themeSubmenu.style.display = 'block';
+        });
+
+        themeSubmenuBackBtn.addEventListener('click', () => {
+            themeSubmenu.style.display = 'none';
+            settingsMainContent.style.display = 'block';
+        });
+
+        buttonColorMenuBtn.addEventListener('click', () => {
+            settingsMainContent.style.display = 'none';
+            buttonColorSubmenu.style.display = 'block';
+        });
+
+        buttonColorSubmenuBackBtn.addEventListener('click', () => {
+            buttonColorSubmenu.style.display = 'none';
+            settingsMainContent.style.display = 'block';
+        });
+
+        emojiPackMenuBtn.addEventListener('click', () => {
+            settingsMainContent.style.display = 'none';
+            emojiPackSubmenu.style.display = 'block';
+        });
+
+        emojiPackSubmenuBackBtn.addEventListener('click', () => {
+            emojiPackSubmenu.style.display = 'none';
+            settingsMainContent.style.display = 'block';
+        });
+
+        function isHalloweenSeason() {
+            const today = new Date();
+            // Месяцы в JS начинаются с 0, поэтому 10 - это ноябрь. Дата: 1 ноября текущего года.
+            const halloweenEndDate = new Date(today.getFullYear(), 10, 1); 
+            return today < halloweenEndDate;
+        }
+
+        function createThemeButtons() {
+            const themeContainer = document.getElementById('theme-buttons-container');
+            themeContainer.innerHTML = ''; // Clear previous buttons
+            const themes = {
+                'Red': 'red',
+                'Yellow': 'yellow',
+                'Green': 'green',
+                'Orange': 'orange',
+                'Purple': 'purple',
+                'White': 'white', // Default
+                'Brown': '#A52A2A', // Purchasable
+                'Grey': 'grey'
+            };
+
+            const userPurchases = getUserPurchases();
+
+            Object.keys(themes).forEach(themeName => {
+                const themeValue = themes[themeName];
+                const themeId = `theme_${themeName.toLowerCase()}`;
+                const isPurchased = userPurchases.includes(themeId);
+                // 'White' and 'Orange' are default/seasonal themes
+                const isDefault = themeValue === 'white' || themeValue === 'orange';
+
+                if (isPurchased || isDefault) {
+                    const button = document.createElement('button');
+                    button.textContent = themeName;
+                    button.style.backgroundColor = (themeValue === 'orange' && !isHalloweenSeason()) ? 'white' : themeValue;
+                    if (themeName === 'White' || themeName === 'Yellow') {
+                        button.style.color = 'black';
+                    } else {
+                        button.style.color = 'white';
+                    }
+                    button.addEventListener('click', () => { document.body.style.backgroundColor = themeValue; });
+                    themeContainer.appendChild(button);
+                }
+            });
+        }
+
+        function createButtonColorButtons() {
+            const container = document.getElementById('button-color-buttons-container');
+            const colors = {
+                'Black': 'black',
+                'Pink': 'hotpink',
+                'Dark Blue': 'darkblue',
+                'Red': 'red'
+            };
+
+            Object.keys(colors).forEach(colorName => {
+                const button = document.createElement('button');
+                button.textContent = colorName;
+                button.style.backgroundColor = colors[colorName];
+                button.style.color = 'white'; // Default to white text
+
+                button.addEventListener('click', () => {
+                    const allButtons = document.querySelectorAll('button');
+                    const userPurchases = getUserPurchases();
+                    const colorId = `button_color_${colors[colorName]}`;
+                    const defaultColors = ['black', 'hotpink', 'darkblue'];
+
+                    if (defaultColors.includes(colors[colorName]) || userPurchases.includes(colorId)) {
+                        allButtons.forEach(btn => {
+                            // We don't want to change the style of the back buttons or theme/color selection buttons
+                            if (!btn.classList.contains('back-button') && !btn.parentElement.id.includes('theme-buttons') && !btn.parentElement.id.includes('button-color-buttons')) {
+                                btn.style.backgroundColor = colors[colorName];
+                                btn.style.color = 'white'; // Keep text white for all these colors
+                            }
+                        });
+                    } else {
+                        alert('You need to buy this button color from the shop first!');
+                    }
+                });
+                container.appendChild(button);
+            });
+        }
+
+        function createEmojiPackButtons() {
+            const container = document.getElementById('emoji-pack-buttons-container');
+            container.innerHTML = '';
+            const userPurchases = getUserPurchases();
+
+            // Add default Halloween pack
+            const halloweenPack = { name: 'Halloween Pack', value: ['🎃', '💀', '🕸️', '🔪', '👻'] };
+            const defaultPacks = { 'emoji_pack_halloween': halloweenPack };
+
+            for (const packId in allShopItems) {
+                if (allShopItems[packId].type === 'emoji_pack' && userPurchases.includes(packId)) {
+                    defaultPacks[packId] = allShopItems[packId];
+                }
+            }
+
+            for (const packId in defaultPacks) {
+                const pack = defaultPacks[packId];
+                const button = document.createElement('button');
+                button.textContent = pack.name;
+                button.addEventListener('click', () => {
+                    createBackgroundEmojis(pack.value);
+                });
+                container.appendChild(button);
+            }
+        }
+
+        function createLanguageButtons() {
+            const langContainer = document.getElementById('language-submenu');
+            const langCodes = { 'English': 'en', 'Русский': 'ru', 'Español': 'es', 'Deutsch': 'de', 'Suomi': 'fi', '中文': 'zh', 'Українська': 'uk', 'Português': 'pt' };
+            
+            Object.keys(langCodes).forEach(langName => {
+                const button = document.createElement('button');
+                button.textContent = langName;
+                button.addEventListener('click', () => {
+                    applyLanguage(langCodes[langName]);
+                });
+                langContainer.appendChild(button);
+            });
+        }
+
+        redHorseBtn.addEventListener('click', () => handleHorseSelection('red'));
+        greenHorseBtn.addEventListener('click', () => handleHorseSelection('green'));
+        blueHorseBtn.addEventListener('click', () => handleHorseSelection('blue'));
+
+        bbBoss.addEventListener('click', handleBossClick);
+        bbPlayAgainBtn.addEventListener('click', () => startBossBattleGame(currentBossDifficulty));
+        document.getElementById('bb-easy-btn').addEventListener('click', () => startBossBattleGame('easy'));
+        document.getElementById('bb-normal-btn').addEventListener('click', () => startBossBattleGame('normal'));
+        document.getElementById('bb-hard-btn').addEventListener('click', () => startBossBattleGame('hard'));
+
+
+        tttPlayAgainBtn.addEventListener('click', startTttGame);
+
+        wamPlayAgainBtn.addEventListener('click', startWamGame);
+        ssStartBtn.addEventListener('click', startSimonSaysRound);
+
+
+
+
+        function createBackgroundEmojis(emojiSet) {
+            const emojiContainer = document.getElementById('emoji-background');
+            if (!emojiContainer) return;
+            emojiContainer.innerHTML = ''; // Clear existing emojis
+            const emojis = emojiSet || ['🎃', '💀', '🕸️', '🔪', '👻']; // Default to Halloween
+            const numberOfEmojis = 50;
+
+            for (let i = 0; i < numberOfEmojis; i++) {
+                const emojiSpan = document.createElement('span');
+                
+                emojiSpan.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+                emojiSpan.style.left = Math.random() * 100 + 'vw';
+                emojiSpan.style.top = Math.random() * 100 + 'vh';
+                emojiSpan.style.fontSize = (Math.random() * 2.5 + 1) + 'em'; // от 1em до 3.5em
+                emojiSpan.style.opacity = Math.random() * 0.4 + 0.1; // от 0.1 до 0.5
+                emojiSpan.style.animationDelay = Math.random() * 10 + 's';
+                emojiSpan.style.animationDuration = (Math.random() * 10 + 8) + 's'; // от 8 до 18 секунд
+
+                emojiContainer.appendChild(emojiSpan);
+            }
+        }
+
+        // --- AUTH LOGIC ---
+        function updateAuthUI() {
+            const currentUser = localStorage.getItem('currentUser');
+            authContainer.innerHTML = ''; // Clear previous state
+            
+            if (currentUser) {
+                // Logged in state
+                document.getElementById('main-content').style.display = 'block';
+                document.getElementById('welcome-overlay').style.display = 'none';
+                loadUserData();
+                const t = translations[currentLanguage];
+                const welcomeText = document.createElement('span');
+                welcomeText.textContent = `${t.welcome}, ${currentUser}! `;
+                welcomeText.style.color = (document.body.style.backgroundColor === 'white' || document.body.style.backgroundColor === 'yellow') ? 'black' : 'white';
+
+                const logoutBtn = document.createElement('button');
+                logoutBtn.id = 'logout-btn';
+                logoutBtn.textContent = t.logout;
+                logoutBtn.addEventListener('click', handleLogout);
+
+                authContainer.appendChild(welcomeText);
+                authContainer.appendChild(logoutBtn);
+            } else {
+                // Logged out state
+                document.getElementById('main-content').style.display = 'none';
+                document.getElementById('welcome-overlay').style.display = 'flex';
+                showRegisterForm();
+            }
+        }
+
+        function handleLogout() {
+            saveUserData(); // Save data before logging out
+            localStorage.removeItem('currentUser');
+            totalWins = 0;
+            coins = 0;
+            updateAuthUI();
+        }
+
+        function handleLogin(e) {
+            const username = document.getElementById('welcome-login-username').value;
+            const password = document.getElementById('welcome-login-password').value;
+            const users = JSON.parse(localStorage.getItem('users')) || [];
+            
+            const user = users.find(u => u.username === username && u.password === password);
+
+            if (user) {
+                localStorage.setItem('currentUser', user.username);
+                updateAuthUI();
+            } else {
+                document.getElementById('welcome-login-error').textContent = translations[currentLanguage].loginError;
+            }
+        }
+
+        function handleRegister(e) {
+            const username = document.getElementById('welcome-register-username').value;
+            const password = document.getElementById('welcome-register-password').value;
+            const email = document.getElementById('welcome-register-email').value;
+            let users = JSON.parse(localStorage.getItem('users')) || [];
+
+            if (!username || !password || !email) {
+                document.getElementById('welcome-register-error').textContent = translations[currentLanguage].allFieldsRequired;
+                return;
+            }
+
+            if (users.some(u => u.username === username)) {
+                document.getElementById('welcome-register-error').textContent = translations[currentLanguage].registerError;
+            } else {
+                users.push({ username, password, email, wins: 0, coins: 0, purchases: [] });
+                localStorage.setItem('users', JSON.stringify(users));
+                
+                const errorP = document.getElementById('welcome-register-error');
+                errorP.textContent = translations[currentLanguage].registerSuccess;
+                errorP.style.color = 'green';
+
+                setTimeout(showLoginForm, 1500);
+            }
+        }
+
+        function saveUserData() {
+            const currentUser = localStorage.getItem('currentUser');
+            if (currentUser) {
+                let users = JSON.parse(localStorage.getItem('users')) || [];
+                const userIndex = users.findIndex(u => u.username === currentUser);
+                if (userIndex !== -1) {
+                    users[userIndex].wins = totalWins;
+                    users[userIndex].coins = coins;
+                    // purchases are saved when they are made, so no need to save again here unless they can be 'unsaved'
+                    localStorage.setItem('users', JSON.stringify(users));
+                }
+            }
+        }
+
+        function getUserPurchases() {
+            const currentUser = localStorage.getItem('currentUser');
+            if (currentUser) {
+                const users = JSON.parse(localStorage.getItem('users')) || [];
+                const user = users.find(u => u.username === currentUser);
+                return user ? user.purchases || [] : [];
+            }
+            return [];
+        }
+
+        function addUserPurchase(itemId) {
+            const currentUser = localStorage.getItem('currentUser');
+            let users = JSON.parse(localStorage.getItem('users')) || [];
+            const userIndex = users.findIndex(u => u.username === currentUser);
+            if (userIndex !== -1) {
+                if (!users[userIndex].purchases) users[userIndex].purchases = [];
+                users[userIndex].purchases.push(itemId);
+                localStorage.setItem('users', JSON.stringify(users));
+            }
+        }
+
+        function loadUserData() {
+            const currentUser = localStorage.getItem('currentUser');
+            if (currentUser) {
+                const users = JSON.parse(localStorage.getItem('users')) || [];
+                const user = users.find(u => u.username === currentUser);
+                totalWins = user ? user.wins : 0;
+                coins = user ? user.coins : 0;
+            } else {
+                totalWins = 0;
+                coins = 0;
+            }
+            updateDisplay();
+        }
+
+        function showRegisterForm() {
+            const container = document.querySelector('.auth-form-container');
+            const template = document.getElementById('welcome-register-form-template');
+            container.innerHTML = template.innerHTML;
+            translateRegisterForm(translations[currentLanguage]);
+            document.getElementById('welcome-register-submit').addEventListener('click', handleRegister);
+            document.getElementById('switch-to-login').addEventListener('click', showLoginForm);
+        }
+
+        function showLoginForm() {
+            const container = document.querySelector('.auth-form-container');
+            const template = document.getElementById('welcome-login-form-template');
+            container.innerHTML = template.innerHTML;
+            translateLoginForm(translations[currentLanguage]);
+            document.getElementById('welcome-login-submit').addEventListener('click', handleLogin);
+            document.getElementById('switch-to-register').addEventListener('click', showRegisterForm);
+        }
+
+        function translateRegisterForm(t) {
+            document.getElementById('welcome-register-title').textContent = t.register;
+            document.getElementById('welcome-register-username').placeholder = t.usernamePlaceholder;
+            document.getElementById('welcome-register-email').placeholder = t.emailPlaceholder;
+            document.getElementById('welcome-register-password').placeholder = t.passwordPlaceholder;
+            document.getElementById('welcome-register-submit').textContent = t.register;
+            document.getElementById('switch-to-login').textContent = t.switchToLogin;
+        }
+
+        function translateLoginForm(t) {
+            document.getElementById('welcome-login-title').textContent = t.login;
+            document.getElementById('welcome-login-username').placeholder = t.usernamePlaceholder;
+            document.getElementById('welcome-login-password').placeholder = t.passwordPlaceholder;
+            document.getElementById('welcome-login-submit').textContent = t.login;
+            document.getElementById('switch-to-register').textContent = t.switchToRegister;
+        }
+        
+        window.addEventListener('beforeunload', saveUserData);
+
+        // Initial language application
+        function initialize() {
+            // Halloween seasonal theme
+            const isHalloween = isHalloweenSeason();
+            if (isHalloween) {
+                document.body.style.backgroundColor = 'orange';
+                const leftCobweb = document.getElementById('left-cobweb');
+                const rightCobweb = document.getElementById('right-cobweb');
+                if(leftCobweb) leftCobweb.style.display = 'block';
+                if(rightCobweb) rightCobweb.style.display = 'block';
+            }
+
+
+            createLanguageButtons();
+            createButtonColorButtons();
+            createThemeButtons();
+            createEmojiPackButtons();
+            rotateShopItems(); // Initial shop items
+            createBackgroundEmojis();
+            loadUserData();
+            applyLanguage(currentLanguage);
+            updateAuthUI();
+        }
+
+        initialize();
+
+        // Rotate shop items every 5 minutes
+        setInterval(rotateShopItems, 5 * 60 * 1000);
+
+    </script>
+</body>
+</html>
